@@ -1,4 +1,4 @@
-# Guinchos Sistema de gestão de transportes BTR Guinchos
+# Sistema de gestão de transportes BTR Guinchos
 
 ### Contribuidores
 
