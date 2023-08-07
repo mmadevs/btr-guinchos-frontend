@@ -1,10 +1,7 @@
-'use client'
-import { ChakraProvider, Grid, GridItem } from '@chakra-ui/react'
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import { Sidebar } from './components/Sidebar'
-import { Header } from './components/Header'
+import InsideLayout from './components/templates/InsideLayout'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -19,24 +16,9 @@ export default function RootLayout({
 	children: React.ReactNode
 }) {
 	return (
-		<html lang='en'>
+		<html lang='pt-BR'>
 			<body className={inter.className}>
-				<ChakraProvider>
-					<Grid
-						p={0}
-						className='max-h-screen w-screen'
-						templateColumns={'auto 1fr'}
-						templateRows={'auto 1fr'}
-					>
-						<GridItem colStart={2}>
-							<Header />
-						</GridItem>
-						<GridItem rowStart={1} rowSpan={2} h={'full'}>
-							<Sidebar />
-						</GridItem>
-						<GridItem>{children}</GridItem>
-					</Grid>
-				</ChakraProvider>
+				<InsideLayout>{children}</InsideLayout>
 			</body>
 		</html>
 	)
