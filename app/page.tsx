@@ -1,5 +1,7 @@
-import Image from 'next/image'
+'use client'
 
 export default function Home() {
-	return <main>Olá, BTR Guinchos</main>
+	return (
+		<main className='flex flex-col items-start bg-zinc-900 w-full h-full'></main>
+	)
 }
