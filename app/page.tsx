@@ -3,7 +3,7 @@
 import { extendTheme } from '@chakra-ui/react'
 import { useRouter } from 'next/navigation'
 
-const theme = extendTheme({
+extendTheme({
 	breakpoints: {
 		sm: '320px',
 		md: '768px',
