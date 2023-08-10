@@ -14,6 +14,10 @@
     "@emotion/styled": "^11.11.0",
     "autoprefixer": "10.4.14",
     "eslint": "^8.46.0",
+    "eslint-config-next": "13.4.12",
+    "@types/node": "20.4.8",
+    "@types/react": "18.2.18",
+    "@types/react-dom": "18.2.7",
     "formik": "^2.4.3",
     "framer-motion": "^10.15.0",
     "next": "13.4.12",
@@ -26,12 +30,8 @@
     "typescript": "5.1.6"
   },
   "devDependencies": {
-    "@types/node": "20.4.8",
-    "@types/react": "18.2.18",
-    "@types/react-dom": "18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.2.1",
     "@typescript-eslint/parser": "^6.2.1",
-    "eslint-config-next": "13.4.12",
     "eslint-config-prettier": "^8.10.0",
     "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-react": "^7.33.1"
