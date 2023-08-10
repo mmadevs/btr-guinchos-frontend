@@ -1,7 +1,7 @@
-import './globals.css'
+import '@/app/globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import UnauthenticatedLayout from './components/templates/UnauthenticatedLayout'
+import AuthenticatedLayout from '@/app/components/templates/AuthenticatedLayout'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,7 +18,7 @@ export default function RootLayout({
 	return (
 		<html lang='pt-BR'>
 			<body className={inter.className}>
-				<UnauthenticatedLayout>{children}</UnauthenticatedLayout>
+				<AuthenticatedLayout>{children}</AuthenticatedLayout>
 			</body>
 		</html>
 	)

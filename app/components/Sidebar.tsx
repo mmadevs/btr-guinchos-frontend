@@ -16,7 +16,10 @@ import {
 	IconButton,
 	Divider,
 	Image,
-	Center
+	Center,
+	Menu,
+	MenuButton,
+	MenuList
 } from '@chakra-ui/react'
 import { useState } from 'react'
 import {
@@ -106,19 +109,20 @@ export const Sidebar: FunctionComponent = () => {
 					<DrawerBody>
 						<VStack className='py-5'>
 							{buttons.map((button) => (
-								<Button
-									key={button.route}
-									className='w-full hover:text-black'
-									background={'transparent'}
-									color={'white'}
-									leftIcon={
+								<Menu>
+									<MenuButton
+										key={button.route}
+										className='w-full hover:text-black'
+										background={'transparent'}
+										color={'white'}
+									>
 										<IconBase className='text-3xl'>
 											{button.icon}
 										</IconBase>
-									}
-								>
-									<Text flex={1}>{button.label}</Text>
-								</Button>
+										<Text flex={1}>{button.label}</Text>
+									</MenuButton>
+									<MenuList></MenuList>
+								</Menu>
 							))}
 						</VStack>
 					</DrawerBody>
