@@ -1,14 +1,15 @@
 module.exports = {
-    "env": {
+    env: {
         "browser": true,
         "es2021": true,
         "node": true
     },
-    "extends": [
+    extends: [
         "eslint:recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:react/recommended",
-        "plugin:prettier/recommended"
+        "plugin:prettier/recommended",
+        "next/core-web-vitals"
     ],
     "overrides": [
         {
@@ -23,16 +24,18 @@ module.exports = {
             }
         }
     ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaVersion": "latest",
-        "sourceType": "module"
+    parser: "@typescript-eslint/parser",
+    parserOptions: {
+        ecmaVersion: "latest",
+        sourceType: "module"
     },
-    "plugins": [
+    plugins: [
         "@typescript-eslint",
         "react"
     ],
-    "rules": {
+    rules: {
+        "react/react-in-jsx-scope": "off",
+        "react/jsx-uses-react": "off",
         indent:"off",
         "prettier/prettier": [
             'error',

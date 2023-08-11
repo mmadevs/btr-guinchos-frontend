@@ -8,8 +8,6 @@ import {
 	DrawerContent,
 	DrawerCloseButton,
 	Button,
-	Container,
-	HStack,
 	VStack,
 	Tooltip,
 	Text,
@@ -59,7 +57,11 @@ export const Sidebar: FunctionComponent = () => {
 						icon={<MdMenu />}
 					/>
 				</Tooltip>
-				<Image src='/company_logo.png' boxSize={'50px'} />
+				<Image
+					src='/company_logo.png'
+					boxSize={'50px'}
+					alt='Company logo'
+				/>
 				<Divider />
 				<VStack className='py-5 flex-1'>
 					{buttons.map((button) => (
@@ -101,7 +103,11 @@ export const Sidebar: FunctionComponent = () => {
 					<DrawerCloseButton color={'white'} />
 					<DrawerHeader color={'white'}>
 						<Center gap={4}>
-							<Image src='/company_logo.png' boxSize={'50px'} />
+							<Image
+								src='/company_logo.png'
+								boxSize={'50px'}
+								alt='Company logo'
+							/>
 							<Text fontSize={'md'}>BTR Guinchos</Text>
 						</Center>
 					</DrawerHeader>
@@ -109,9 +115,8 @@ export const Sidebar: FunctionComponent = () => {
 					<DrawerBody>
 						<VStack className='py-5'>
 							{buttons.map((button) => (
-								<Menu>
+								<Menu key={button.route}>
 									<MenuButton
-										key={button.route}
 										className='w-full hover:text-black'
 										background={'transparent'}
 										color={'white'}

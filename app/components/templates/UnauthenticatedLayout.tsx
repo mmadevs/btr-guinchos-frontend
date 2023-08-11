@@ -1,8 +1,6 @@
 'use client'
 import { FunctionComponent, ReactNode } from 'react'
-import { ChakraProvider, Grid, GridItem, HStack } from '@chakra-ui/react'
-import { Sidebar } from '@/app/components/Sidebar'
-import { Header } from '@/app/components/Header'
+import { ChakraProvider, HStack } from '@chakra-ui/react'
 
 const UnauthenticatedLayout: FunctionComponent<{ children: ReactNode }> = ({
 	children

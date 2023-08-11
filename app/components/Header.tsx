@@ -1,33 +1,6 @@
-import { FunctionComponent, Fragment } from 'react'
-import {
-	Drawer,
-	DrawerBody,
-	DrawerFooter,
-	DrawerHeader,
-	DrawerOverlay,
-	DrawerContent,
-	DrawerCloseButton,
-	Button,
-	Container,
-	HStack,
-	VStack,
-	Tooltip,
-	Text,
-	IconButton,
-	Divider,
-	Image,
-	Center
-} from '@chakra-ui/react'
-import { useState } from 'react'
-import {
-	MdAreaChart,
-	MdEditDocument,
-	MdHome,
-	MdMenu,
-	MdNotifications,
-	MdSettings
-} from 'react-icons/md'
-import { IconBase } from 'react-icons'
+import { FunctionComponent } from 'react'
+import { HStack, Tooltip, Text, IconButton } from '@chakra-ui/react'
+import { MdNotifications } from 'react-icons/md'
 
 export const Header: FunctionComponent = () => {
 	return (

@@ -8,15 +8,13 @@ import {
 	Center,
 	Flex,
 	FormControl,
-	FormErrorMessage,
 	FormHelperText,
 	FormLabel,
 	HStack,
 	Image,
 	Input,
 	Link,
-	Text,
-	VStack
+	Text
 } from '@chakra-ui/react'
 import { Formik, Form, Field } from 'formik'
 import { useRouter } from 'next/navigation'
@@ -55,6 +53,7 @@ export default function Login() {
 								bg={'white'}
 								className='w-16 lg:w-40 lg:p-4 lg:rounded-full'
 								src='/company_logo.png'
+								alt='Company logo'
 							/>
 							<Text fontSize={'md'}>Sistema BTR Guinchos</Text>
 						</Center>
