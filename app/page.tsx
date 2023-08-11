@@ -2,6 +2,7 @@
 
 import { extendTheme } from '@chakra-ui/react'
 import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 extendTheme({
 	breakpoints: {
@@ -15,7 +16,10 @@ extendTheme({
 export default function Home() {
 	const router = useRouter()
 
-	router.push('/login')
+	useEffect(() => {
+		router.push('/login')
+	}, [])
+
 	return (
 		<main className='flex flex-col items-start bg-zinc-900 w-full h-full'>
 			voce n logou ainda
