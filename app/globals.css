@@ -14,6 +14,12 @@
     .adaptive {
       background: #fff;
     }
+}
+
+@media (forced-colors: active){
+    .adaptive {
+      background: #fff;
+    }
   }
 
 /* @media (prefers-color-scheme: dark) {
