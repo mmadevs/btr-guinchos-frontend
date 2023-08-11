@@ -16,12 +16,12 @@ extendTheme({
 export default function Home() {
 	const router = useRouter()
 
-	useEffect(() => {
-		router.push('/login')
-	}, [])
+	// useEffect(() => {
+	// 	router.push('/login')
+	// }, [])
 
 	return (
-		<main className='flex flex-col items-start bg-zinc-900 w-full h-full'>
+		<main className='flex flex-col items-start bg-zinc-900 w-screen h-screen'>
 			voce n logou ainda
 		</main>
 	)

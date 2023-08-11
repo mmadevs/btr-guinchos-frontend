@@ -7,7 +7,7 @@ const UnauthenticatedLayout: FunctionComponent<{ children: ReactNode }> = ({
 }) => {
 	return (
 		<ChakraProvider>
-			<HStack className='fixed inset-0'>{children}</HStack>
+			<HStack className=''>{children}</HStack>
 		</ChakraProvider>
 	)
 }

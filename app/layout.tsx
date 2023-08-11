@@ -17,6 +17,9 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang='pt-BR'>
+			<head>
+				<meta name='color-scheme' content='light' />
+			</head>
 			<body className={inter.className}>
 				<UnauthenticatedLayout>{children}</UnauthenticatedLayout>
 			</body>

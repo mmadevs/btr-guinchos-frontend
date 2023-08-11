@@ -37,7 +37,11 @@ export default function Login() {
 		return error
 	}
 	return (
-		<main className='flex flex-col p-2 items-center justify-center bg-gray-900 w-screen h-screen'>
+		<main
+			className={`flex flex-col p-2 items-center 
+            justify-center bg-gray-900
+         w-screen h-screen min-h-full `}
+		>
 			<HStack className=''>
 				<Card
 					className='w-full h-full lg:w-auto'
@@ -46,7 +50,7 @@ export default function Login() {
 				>
 					<CardHeader
 						color={{ base: 'black', lg: 'white' }}
-						className='lg:bg-gray-800'
+						className='lg:bg-gray-800 adaptive'
 					>
 						<Center className='gap-4 h-full flex flex-col items-center justify-center'>
 							<Image
@@ -58,7 +62,7 @@ export default function Login() {
 							<Text fontSize={'md'}>Sistema BTR Guinchos</Text>
 						</Center>
 					</CardHeader>
-					<CardBody>
+					<CardBody className='adaptive'>
 						<Center>
 							<Text fontSize={'2xl'}>Faça login</Text>
 						</Center>

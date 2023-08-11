@@ -11,7 +11,7 @@ const AuthenticatedLayout: FunctionComponent<{ children: ReactNode }> = ({
 		<ChakraProvider>
 			<Grid
 				p={0}
-				className='fixed inset-0 w-screen'
+				className='w-screen'
 				templateColumns={'auto 1fr'}
 				templateRows={'auto 1fr'}
 			>
