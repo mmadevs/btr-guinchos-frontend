@@ -44,7 +44,7 @@ export default function Login() {
 		>
 			<HStack className=''>
 				<Card
-					className='w-full h-full lg:w-auto'
+					className='w-full h-full lg:w-auto rounded overflow-hidden'
 					bg={'white'}
 					direction={{ base: 'column', lg: 'row' }}
 				>
