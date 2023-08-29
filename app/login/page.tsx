@@ -185,13 +185,13 @@ export default function Login() {
 									<Flex justify={'space-between'} w={'full'}>
 										<Link
 											fontSize={'smaller'}
-											href='/cadastro'
+											href='/cadastre-se'
 										>
 											Cadastrar-se
 										</Link>
 										<Link
 											fontSize={'smaller'}
-											href='/recuperar_senha'
+											href='/recuperar-senha'
 										>
 											Esqueci a senha
 										</Link>
