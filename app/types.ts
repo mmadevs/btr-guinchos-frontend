@@ -1,26 +1,3 @@
-import { z } from 'zod'
-
-export const schemas = {
-	person: z.object({
-		id: z.string(),
-		name: z.string(),
-		email: z.string(),
-		phone: z.string(),
-		address: z.object({}),
-		imageUrl: z.string().optional(),
-		createdAt: z.date()
-	}),
-	place: z.object({
-		id: z.string(),
-		name: z.string(),
-		email: z.string(),
-		phone: z.string(),
-		address: z.object({}),
-		imageUrl: z.string().optional(),
-		createdAt: z.date()
-	})
-}
-
 export interface Person {
 	id: string
 	name: string
