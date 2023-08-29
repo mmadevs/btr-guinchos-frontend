@@ -1,4 +1,27 @@
-interface Person {
+import { z } from 'zod'
+
+export const schemas = {
+	person: z.object({
+		id: z.string(),
+		name: z.string(),
+		email: z.string(),
+		phone: z.string(),
+		address: z.object({}),
+		imageUrl: z.string().optional(),
+		createdAt: z.date()
+	}),
+	place: z.object({
+		id: z.string(),
+		name: z.string(),
+		email: z.string(),
+		phone: z.string(),
+		address: z.object({}),
+		imageUrl: z.string().optional(),
+		createdAt: z.date()
+	})
+}
+
+export interface Person {
 	id: string
 	name: string
 	email: string
@@ -8,20 +31,20 @@ interface Person {
 	createdAt: Date
 }
 
-interface Individual extends Person {
+export interface Individual extends Person {
 	bornIn: Date
 	cpf: string
 }
-interface MyCompany extends Company {
+export interface MyCompany extends Company {
 	documents: AppDocument[]
 }
-interface Company extends Person {
+export interface Company extends Person {
 	manager: Individual
 	corporateName: string
 	cnpj: string
 }
 
-interface Permissions {
+export interface Permissions {
 	id: string
 	addUser: boolean
 	modifyUser: boolean
@@ -35,25 +58,25 @@ interface Permissions {
 	createdAt: Date
 }
 
-interface User extends Individual {
+export interface User extends Individual {
 	passwordHash: string
 	permissions: Permissions
 	level: number
 }
 
-interface LotKeeper extends Individual {
+export interface LotKeeper extends Individual {
 	company?: Company
 }
-interface Driver extends Individual {
+export interface Driver extends Individual {
 	company?: Company
 	license: DriverLicense
 }
-interface Brand {
+export interface Brand {
 	id: string
 	name: string
 	imageUrl?: string
 }
-interface Vehicle {
+export interface Vehicle {
 	id: string
 	imageUrl?: string
 	brand: Brand
@@ -65,7 +88,7 @@ interface Vehicle {
 	owner: Person
 }
 
-interface AppDocument {
+export interface AppDocument {
 	id: string
 	name?: string
 	code: string
@@ -76,11 +99,11 @@ interface AppDocument {
 	createdAt: Date
 }
 
-interface DriverLicense extends AppDocument {
+export interface DriverLicense extends AppDocument {
 	category: string
 }
 
-interface Contract extends AppDocument {
+export interface Contract extends AppDocument {
 	id: string
 	digitalSignatureUrl?: string
 	signatureDate: Date
@@ -89,7 +112,7 @@ interface Contract extends AppDocument {
 	payments: Payment[]
 }
 
-interface Address {
+export interface Address {
 	id: string
 	zipCode: string
 	street: string
@@ -100,18 +123,18 @@ interface Address {
 	createdAt: Date
 }
 
-interface Place extends Address {
+export interface Place extends Address {
 	number?: string
 	name?: string
 	landmark?: string
 }
 
-interface Lot extends Place {
+export interface Lot extends Place {
 	owner: Person
 	maxCapacity?: number
 }
 
-interface Service {
+export interface Service {
 	id: string
 	priority: boolean
 	partnerCompany?: Company
@@ -132,14 +155,14 @@ enum ServiceStatus {
 	'finished'
 }
 
-interface Storage extends Service {
+export interface Storage extends Service {
 	lot: Lot
 	imagesUrl: string[]
 	inspection: Inspection
 	amountOfDays: number
 }
 
-interface Inspection {
+export interface Inspection {
 	inCharge: LotKeeper | Driver
 	documentation: string
 	kilometersDriven: number
@@ -157,7 +180,7 @@ interface Inspection {
 	createdAt: Date
 }
 
-interface Transport extends Service {
+export interface Transport extends Service {
 	deadline: Date
 	originPoint: Place
 	collectPoint: Place
@@ -168,7 +191,7 @@ interface Transport extends Service {
 	vehicleId: Vehicle
 }
 
-interface Checkpoint {
+export interface Checkpoint {
 	id: string
 	type: CheckpointType
 	description?: string
@@ -184,7 +207,7 @@ enum CheckpointType {
 	'finished'
 }
 
-interface Charge {
+export interface Charge {
 	id: string
 	stork: Vehicle
 	lot: Lot
@@ -195,7 +218,7 @@ interface Charge {
 	createdAt: Date
 }
 
-interface AppNotification {
+export interface AppNotification {
 	id: string
 	shortName: string
 	fullName: string
@@ -207,7 +230,7 @@ interface AppNotification {
 	createdAt: Date
 }
 
-interface Payment {
+export interface Payment {
 	id: string
 	payer: Person
 	paymentAmount: number
@@ -219,7 +242,7 @@ interface Payment {
 	createdAt: Date
 }
 
-interface BankPayment {
+export interface BankPayment {
 	receiver: BankAccount
 }
 
@@ -229,34 +252,34 @@ enum PaymentStatus {
 	'Received'
 }
 
-interface CashPayment extends Payment {
+export interface CashPayment extends Payment {
 	receiptAmount: number
 	changeAmount: number
 }
 
-interface CreditPayment extends BankPayment {
+export interface CreditPayment extends BankPayment {
 	machine?: CardMachine
 	installments: number
 	feesAmount: number
 }
 
-interface DebitPayment extends BankPayment {
+export interface DebitPayment extends BankPayment {
 	machine?: CardMachine
 }
 
-interface PIXPayment extends BankPayment {
+export interface PIXPayment extends BankPayment {
 	token: string
 	qrCode: string
 	expiresIn: Date
 }
 
-interface SlipPayment extends BankPayment {
+export interface SlipPayment extends BankPayment {
 	barCode: string
 	qrCode?: string
 	expiresIn: Date
 }
 
-interface CardMachine {
+export interface CardMachine {
 	id: string
 	brand: Brand
 	serialNumber: string
@@ -267,7 +290,7 @@ interface CardMachine {
 	createdAt: Date
 }
 
-interface BankAccount {
+export interface BankAccount {
 	owner: Person
 	bank: Bank
 	branchNumber: string
@@ -275,7 +298,7 @@ interface BankAccount {
 	accountType: string
 }
 
-interface Bank {
+export interface Bank {
 	name: string
 	code: string
 }
