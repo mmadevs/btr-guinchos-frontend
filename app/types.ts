@@ -12,13 +12,15 @@ export interface Individual extends Person {
 	bornIn: Date
 	cpf: string
 }
-export interface MyCompany extends Company {
-	documents: AppDocument[]
-}
+
 export interface Company extends Person {
 	manager: Individual
 	corporateName: string
 	cnpj: string
+}
+
+export interface MyCompany extends Company {
+	documents: AppDocument[]
 }
 
 export interface Permissions {
@@ -42,26 +44,30 @@ export interface User extends Individual {
 }
 
 export interface LotKeeper extends Individual {
-	company?: Company
+	company: Company
 }
+
 export interface Driver extends Individual {
 	company?: Company
 	license: DriverLicense
 }
+
 export interface Brand {
 	id: string
 	name: string
 	imageUrl?: string
 }
+
 export interface Vehicle {
 	id: string
 	imageUrl?: string
 	brand: Brand
 	model: string
+	modelOf: Date
+	madeIn: Date
 	plate: string
 	chassis: string
 	document: AppDocument
-	year: string
 	owner: Person
 }
 
@@ -111,15 +117,35 @@ export interface Lot extends Place {
 	maxCapacity?: number
 }
 
+export interface DetailedPrice {
+	id: string
+	name: string
+	description?: string
+	valueInAmount?: number
+	valueInPercentage?: number
+	createdAt: Date
+}
+export interface Voucher extends DetailedPrice {
+	code: string
+	allowedClients?: Person[]
+	expiresIn?: Date
+}
+
 export interface Service {
 	id: string
+	deadline?: Date
+	forecast: Date
 	priority: boolean
 	partnerCompany?: Company
+	destinyPoint: Place
 	checkpoints: Checkpoint[]
-	basePrice: number
+	inspections: Inspection[]
 	controlUrl: string
-	discountAmount: number
-	finalPrice: number
+	basePrice: number
+	vehicle: Vehicle
+	additions: DetailedPrice[]
+	discounts: DetailedPrice[]
+	getFinalPrice: () => number
 	status: ServiceStatus
 	createdAt: Date
 }
@@ -132,15 +158,9 @@ enum ServiceStatus {
 	'finished'
 }
 
-export interface Storage extends Service {
-	lot: Lot
-	imagesUrl: string[]
-	inspection: Inspection
-	amountOfDays: number
-}
-
 export interface Inspection {
 	inCharge: LotKeeper | Driver
+	imagesUrl: string[]
 	documentation: string
 	kilometersDriven: number
 	color: string
@@ -157,20 +177,19 @@ export interface Inspection {
 	createdAt: Date
 }
 
+export interface Storage extends Service {
+	lot: Lot
+	amountOfDays?: number
+}
+
 export interface Transport extends Service {
-	deadline: Date
 	originPoint: Place
 	collectPoint: Place
-	preInspection: Inspection
-	destinyPoint: Place
-	arrivalForecast: Date
 	driver: Driver
-	vehicleId: Vehicle
 }
 
 export interface Checkpoint {
 	id: string
-	type: CheckpointType
 	description?: string
 	address: Place
 	createdBy: Driver | User
@@ -178,16 +197,9 @@ export interface Checkpoint {
 	createdAt: Date
 }
 
-enum CheckpointType {
-	'started',
-	'common',
-	'finished'
-}
-
 export interface Charge {
 	id: string
 	stork: Vehicle
-	lot: Lot
 	destinyPoint: Place
 	deadline: Date
 	vehicles: Vehicle[]
@@ -202,8 +214,14 @@ export interface AppNotification {
 	description: string
 	viewedBy: User[]
 	imgUrl?: string
-	icon: string
+	type: AppNotificationType
 	url: string
+	createdAt: Date
+}
+export interface AppNotificationType {
+	id: string
+	name: string
+	icon: string
 	createdAt: Date
 }
 
@@ -231,13 +249,11 @@ enum PaymentStatus {
 
 export interface CashPayment extends Payment {
 	receiptAmount: number
-	changeAmount: number
 }
 
 export interface CreditPayment extends BankPayment {
 	machine?: CardMachine
 	installments: number
-	feesAmount: number
 }
 
 export interface DebitPayment extends BankPayment {

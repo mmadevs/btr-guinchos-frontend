@@ -10,8 +10,6 @@ const ServiceStatus = z.enum([
 	'finished'
 ])
 
-const CheckpointType = z.enum(['started', 'common', 'finished'])
-
 export const AppDocument = z.object({
 	id: z.string(),
 	name: z.string().optional(),
@@ -91,7 +89,7 @@ export const User = Individual.extend({
 })
 
 export const LotKeeper = Individual.extend({
-	company: Company.optional()
+	company: Company
 })
 
 export const DriverLicense = AppDocument.extend({
@@ -112,10 +110,11 @@ export const Vehicle = z.object({
 	imageUrl: z.string().optional(),
 	brand: Brand,
 	model: z.string(),
+	modelOf: z.date(),
+	madeIn: z.date(),
 	plate: z.string(),
 	chassis: z.string(),
 	document: AppDocument,
-	year: z.string(),
 	owner: Person
 })
 
@@ -126,7 +125,6 @@ export const Lot = Place.extend({
 
 export const Checkpoint = z.object({
 	id: z.string(),
-	type: CheckpointType,
 	description: z.string().optional(),
 	address: Place,
 	createdBy: z.union([Driver, User]),
@@ -134,21 +132,24 @@ export const Checkpoint = z.object({
 	createdAt: z.date()
 })
 
-export const Service = z.object({
+export const DetailedPrice = z.object({
 	id: z.string(),
-	priority: z.boolean(),
-	partnerCompany: Company.optional(),
-	checkpoints: z.array(Checkpoint),
-	basePrice: z.number(),
-	controlUrl: z.string(),
-	discountAmount: z.number(),
-	finalPrice: z.number(),
-	status: ServiceStatus,
+	name: z.string(),
+	description: z.string().optional(),
+	valueInAmount: z.number().optional(),
+	valueInPercentage: z.number().optional(),
 	createdAt: z.date()
+})
+
+export const Voucher = DetailedPrice.extend({
+	code: z.string(),
+	allowedClients: z.array(Person).optional(),
+	expiresIn: z.date().optional()
 })
 
 export const Inspection = z.object({
 	inCharge: z.union([LotKeeper, Driver]),
+	imagesUrl: z.array(z.string()),
 	documentation: z.string(),
 	kilometersDriven: z.number(),
 	color: z.string(),
@@ -165,32 +166,50 @@ export const Inspection = z.object({
 	createdAt: z.date()
 })
 
+export const Service = z.object({
+	id: z.string(),
+	vehicle: Vehicle,
+	forecast: z.date(),
+	deadline: z.date().optional(),
+	destinyPoint: Place,
+	priority: z.boolean(),
+	partnerCompany: Company.optional(),
+	inspections: z.array(Inspection),
+	checkpoints: z.array(Checkpoint),
+	basePrice: z.number(),
+	controlUrl: z.string(),
+	additions: z.array(DetailedPrice),
+	discounts: z.array(DetailedPrice),
+	getFinalPrice: z.function().returns(z.number()),
+	status: ServiceStatus,
+	createdAt: z.date()
+})
+
 export const Storage = Service.extend({
 	lot: Lot,
-	imagesUrl: z.array(z.string()),
-	inspection: Inspection,
-	amountOfDays: z.number()
+	amountOfDays: z.number().optional()
 })
 
 export const Transport = Service.extend({
-	deadline: z.date(),
 	originPoint: Place,
 	collectPoint: Place,
-	preInspection: Inspection,
-	destinyPoint: Place,
-	arrivalForecast: z.date(),
-	driver: Driver,
-	vehicleId: Vehicle
+	driver: Driver
 })
 
 export const Charge = z.object({
 	id: z.string(),
 	stork: Vehicle,
-	lot: Lot,
 	destinyPoint: Place,
 	deadline: z.date(),
 	vehicles: z.array(Vehicle),
 	maxVehicles: z.number(),
+	createdAt: z.date()
+})
+
+export const AppNotificationType = z.object({
+	id: z.string(),
+	name: z.string(),
+	icon: z.string(),
 	createdAt: z.date()
 })
 
@@ -201,7 +220,7 @@ export const AppNotification = z.object({
 	description: z.string(),
 	viewedBy: z.array(User),
 	imageUrl: z.string().optional(),
-	icon: z.string(),
+	type: AppNotificationType,
 	url: z.string(),
 	createdAt: z.date()
 })
@@ -248,8 +267,7 @@ export const CashPayment = Payment.extend({
 
 export const CreditPayment = BankPayment.extend({
 	machine: CardMachine.optional(),
-	installments: z.number(),
-	feesAmount: z.number()
+	installments: z.number()
 })
 
 export const DebitPayment = BankPayment.extend({
