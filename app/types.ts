@@ -69,6 +69,7 @@ export interface Vehicle {
 	chassis: string
 	document: AppDocument
 	owner: Person
+	createdAt: Date
 }
 
 export interface AppDocument {
@@ -218,6 +219,7 @@ export interface AppNotification {
 	url: string
 	createdAt: Date
 }
+
 export interface AppNotificationType {
 	id: string
 	name: string
@@ -232,12 +234,12 @@ export interface Payment {
 	receiptOn?: Date
 	checkedBy: User
 	status: PaymentStatus
-	voucherUrl?: string
+	proofUrl?: string
 	icon: string
 	createdAt: Date
 }
 
-export interface BankPayment {
+export interface BankPayment extends Payment {
 	receiver: BankAccount
 }
 
@@ -247,18 +249,21 @@ enum PaymentStatus {
 	'Received'
 }
 
+export interface CardPayment extends BankPayment {
+	paymentProvider: PaymentProvider
+	mode: 'physical' | 'online'
+	machineSerialNumber?: string
+}
+
 export interface CashPayment extends Payment {
 	receiptAmount: number
 }
 
-export interface CreditPayment extends BankPayment {
-	machine?: CardMachine
+export interface CreditPayment extends CardPayment {
 	installments: number
 }
 
-export interface DebitPayment extends BankPayment {
-	machine?: CardMachine
-}
+export interface DebitPayment extends CardPayment {}
 
 export interface PIXPayment extends BankPayment {
 	token: string
@@ -271,27 +276,29 @@ export interface SlipPayment extends BankPayment {
 	qrCode?: string
 	expiresIn: Date
 }
-
-export interface CardMachine {
-	id: string
-	brand: Brand
-	serialNumber: string
+export interface PaymentProvider extends Brand {
+	cardFees: CardFees
+}
+export interface CardFees {
 	debitFee: number
 	demandCreditFee: number
 	termCreditFee: number
 	termCreditInterest: number
-	createdAt: Date
 }
 
 export interface BankAccount {
+	id: string
 	owner: Person
 	bank: Bank
 	branchNumber: string
 	accountNumber: string
 	accountType: string
+	createdAt: Date
 }
 
 export interface Bank {
+	id: string
 	name: string
 	code: string
+	createdAt: Date
 }

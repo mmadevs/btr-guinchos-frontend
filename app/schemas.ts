@@ -9,6 +9,7 @@ const ServiceStatus = z.enum([
 	'cancelled',
 	'finished'
 ])
+const CardPaymentMode = z.enum(['physical', 'online'])
 
 export const AppDocument = z.object({
 	id: z.string(),
@@ -115,7 +116,8 @@ export const Vehicle = z.object({
 	plate: z.string(),
 	chassis: z.string(),
 	document: AppDocument,
-	owner: Person
+	owner: Person,
+	createdAt: z.date()
 })
 
 export const Lot = Place.extend({
@@ -225,6 +227,17 @@ export const AppNotification = z.object({
 	createdAt: z.date()
 })
 
+export const CardFees = z.object({
+	debitFee: z.number(),
+	demandCreditFee: z.number(),
+	termCreditFee: z.number(),
+	termCreditInterest: z.number()
+})
+
+export const PaymentProvider = Brand.extend({
+	cardFees: CardFees
+})
+
 export const BankAccount = z.object({
 	owner: Person,
 	bank: Bank,
@@ -240,24 +253,38 @@ export const Payment = z.object({
 	receiptOn: z.date().optional(),
 	checkedBy: User,
 	status: PaymentStatus,
-	voucherUrl: z.string().optional(),
+	proofUrl: z.string().optional(),
 	icon: z.string(),
 	createdAt: z.date()
 })
 
-export const CardMachine = z.object({
-	id: z.string(),
-	brand: Brand,
-	serialNumber: z.string(),
-	debitFee: z.number(),
-	demandCreditFee: z.number(),
-	termCreditFee: z.number(),
-	termCreditInterest: z.number(),
-	createdAt: z.date()
+export const BankPayment = Payment.extend({
+	receiver: BankAccount
+})
+// export const CardPayment = BankPayment.extend({
+// 	id: z.string(),
+// 	brand: Brand,
+// 	debitFee: z.number(),
+// 	demandCreditFee: z.number(),
+// 	termCreditFee: z.number(),
+// 	termCreditInterest: z.number(),
+// 	createdAt: z.date()
+// })
+export const CardPayment = BankPayment.extend({
+	paymentProvider: PaymentProvider,
+	mode: CardPaymentMode,
+	machineSerialNumber: z.string().optional()
 })
 
-export const BankPayment = z.object({
-	receiver: BankAccount
+export const CardMachine = z.object({
+	id: z.string(),
+	serialNumber: z.string(),
+	createdAt: z.date()
+})
+export const OnlinePayment = z.object({
+	id: z.string(),
+	serialNumber: z.string(),
+	createdAt: z.date()
 })
 
 export const CashPayment = Payment.extend({
@@ -265,14 +292,11 @@ export const CashPayment = Payment.extend({
 	changeAmount: z.number()
 })
 
-export const CreditPayment = BankPayment.extend({
-	machine: CardMachine.optional(),
+export const CreditPayment = CardPayment.extend({
 	installments: z.number()
 })
 
-export const DebitPayment = BankPayment.extend({
-	machine: CardMachine.optional()
-})
+export const DebitPayment = CardPayment.extend({})
 
 export const PIXPayment = BankPayment.extend({
 	token: z.string(),
