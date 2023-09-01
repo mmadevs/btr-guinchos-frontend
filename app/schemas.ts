@@ -17,7 +17,7 @@ export const AppDocument = z.object({
 	code: z.string(),
 	imagesUrl: z.array(z.string()).optional(),
 	filesUrl: z.array(z.string()).optional(),
-	issueDate: z.date(),
+	issuedIn: z.date(),
 	expiresIn: z.date().optional(),
 	createdAt: z.date()
 })
@@ -249,6 +249,7 @@ export const BankAccount = z.object({
 export const Payment = z.object({
 	id: z.string(),
 	payer: Person,
+	expiresIn: z.date().optional(),
 	paymentAmount: z.number(),
 	receiptOn: z.date().optional(),
 	checkedBy: User,
@@ -300,14 +301,12 @@ export const DebitPayment = CardPayment.extend({})
 
 export const PIXPayment = BankPayment.extend({
 	token: z.string(),
-	qrCode: z.string(),
-	expiresIn: z.date()
+	qrCode: z.string()
 })
 
 export const SlipPayment = BankPayment.extend({
 	barCode: z.string(),
-	qrCode: z.string().optional(),
-	expiresIn: z.date()
+	qrCode: z.string().optional()
 })
 
 export const Contract = AppDocument.extend({

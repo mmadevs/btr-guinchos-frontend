@@ -78,7 +78,7 @@ export interface AppDocument {
 	code: string
 	imagesUrl?: string[]
 	filesUrl?: string[]
-	issueDate: Date
+	issuedIn: Date
 	expiresIn?: Date
 	createdAt: Date
 }
@@ -91,10 +91,28 @@ export interface Contract extends AppDocument {
 	id: string
 	digitalSignatureUrl?: string
 	signatureDate: Date
+	generatedBy: User
 	client: Person
+	services: Service[]
+	payments?: Payment[]
+}
+
+export interface Bill extends AppDocument {
+	number: number
+	taxCouponAccessKey?: string
 	services: Service[]
 	payments: Payment[]
 }
+
+export interface Invoice {
+	payments: Payment[]
+}
+
+// export interface BillsToPay {
+//     id: string
+// 	payments: Payment[]
+//     createdAt: Date
+// }
 
 export interface Address {
 	id: string
@@ -233,6 +251,7 @@ export interface Payment {
 	paymentAmount: number
 	receiptOn?: Date
 	checkedBy: User
+	deadline?: Date
 	status: PaymentStatus
 	proofUrl?: string
 	icon: string
@@ -274,7 +293,6 @@ export interface PIXPayment extends BankPayment {
 export interface SlipPayment extends BankPayment {
 	barCode: string
 	qrCode?: string
-	expiresIn: Date
 }
 export interface PaymentProvider extends Brand {
 	cardFees: CardFees
