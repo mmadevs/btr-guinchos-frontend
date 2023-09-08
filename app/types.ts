@@ -150,25 +150,6 @@ export interface Voucher extends DetailedPrice {
 	expiresIn?: Date
 }
 
-export interface Service {
-	id: string
-	deadline?: Date
-	forecast: Date
-	priority: boolean
-	partnerCompany?: Company
-	destinyPoint: Place
-	checkpoints: Checkpoint[]
-	inspections: Inspection[]
-	controlUrl: string
-	basePrice: number
-	vehicle: Vehicle
-	additions: DetailedPrice[]
-	discounts: DetailedPrice[]
-	getFinalPrice: () => number
-	status: ServiceStatus
-	createdAt: Date
-}
-
 enum ServiceStatus {
 	'notStarted',
 	'started',
@@ -202,9 +183,28 @@ export interface Storage extends Service {
 }
 
 export interface Transport extends Service {
-	originPoint: Place
-	collectPoint: Place
 	driver: Driver
+	originPoint: Place
+	destinyPoint: Place
+	checkpoints: Checkpoint[]
+}
+export interface Collect extends Transport {
+	collectPoint: Place
+}
+
+export interface Service {
+	id: string
+	deadline?: Date
+	forecast: Date
+	priority: boolean
+	inspections: Inspection[]
+	basePrice: number
+	additions: DetailedPrice[]
+	discounts: DetailedPrice[]
+	vehicle: Vehicle
+	getFinalPrice: () => number
+	status: ServiceStatus
+	createdAt: Date
 }
 
 export interface Checkpoint {
@@ -219,6 +219,7 @@ export interface Checkpoint {
 export interface Charge {
 	id: string
 	stork: Vehicle
+	originPoint: Place
 	destinyPoint: Place
 	deadline: Date
 	vehicles: Vehicle[]
@@ -241,7 +242,7 @@ export interface AppNotification {
 export interface AppNotificationType {
 	id: string
 	name: string
-	icon: string
+	readonly icon: string
 	createdAt: Date
 }
 
@@ -265,7 +266,7 @@ export interface BankPayment extends Payment {
 enum PaymentStatus {
 	'notReceived',
 	'waitingApprovement',
-	'Received'
+	'received'
 }
 
 export interface CardPayment extends BankPayment {
@@ -294,9 +295,11 @@ export interface SlipPayment extends BankPayment {
 	barCode: string
 	qrCode?: string
 }
+
 export interface PaymentProvider extends Brand {
 	cardFees: CardFees
 }
+
 export interface CardFees {
 	debitFee: number
 	demandCreditFee: number

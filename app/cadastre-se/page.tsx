@@ -11,13 +11,16 @@ import {
 	Image,
 	Input,
 	Link,
-	Text
+	Text,
+	VStack
 } from '@chakra-ui/react'
 import { Formik, Form, Field } from 'formik'
 import { useRouter } from 'next/navigation'
-import { IRegisterField } from '../types/Fields'
+import { ISignInField } from '../types/Fields'
 import { z } from 'zod'
+import { intervalToDuration, isValid } from 'date-fns'
 import { toFormikValidate } from 'zod-formik-adapter'
+import ReactInputMask from 'react-input-mask'
 
 export default function CadastreSe() {
 	const router = useRouter()
@@ -31,17 +34,31 @@ export default function CadastreSe() {
 				.string()
 				.email('Insira um email válido')
 				.min(5, { message: 'Insira um email válido' }),
-			cpfCnpj: z
+			cpf: z
+				.string()
+				.refine(
+					(value) => value.replace(/[^0-9]/g, '').length === 11,
+					'CPF inválido!'
+				),
+			bornIn: z.string({
+				invalid_type_error: 'Insira uma data de nascimento'
+			}),
+			phone: z
 				.string()
 				.refine(
 					(value) =>
 						[11, 14].includes(value.replace(/[^0-9]/g, '').length),
-					'CPF ou CNPJ inválido!'
+					'Telefone inválido!'
 				),
 			password: z
 				.string()
 				.min(8, 'Sua senha deve ter no mínimo 8 caracteres')
-				.max(12, 'Sua senha deve ter no máximo 12 caracteres'),
+				.max(12, 'Sua senha deve ter no máximo 16 caracteres')
+				.refine(
+					(value) =>
+						'@_-#$.*+!&'.split('').some((x) => value.includes(x)),
+					'Insira um caractere especial! (@_-#$.*+!&)'
+				),
 			confirmPassword: z.string()
 		})
 		.superRefine(({ password, confirmPassword }, ctx) => {
@@ -53,39 +70,114 @@ export default function CadastreSe() {
 				})
 			}
 		})
+		.superRefine(({ bornIn }, ctx) => {
+			console.log(isValid(new Date(bornIn)), bornIn)
+			if (!isValid(new Date(bornIn))) {
+				ctx.addIssue({
+					code: 'custom',
+					path: ['bornIn'],
+					message: 'Insira uma data válida'
+				})
+			} else if (
+				(intervalToDuration({
+					start: new Date(bornIn),
+					end: new Date()
+				})?.years ?? 0) < 16
+			) {
+				ctx.addIssue({
+					code: 'custom',
+					path: ['bornIn'],
+					message: 'Você precisa ser maior de 16 anos!'
+				})
+			}
+		})
 
-	const fields: IRegisterField[] = [
+	const fieldsGroups: { name: string; fields: ISignInField[] }[] = [
 		{
-			name: 'name',
-			label: 'Nome',
-			placeholder: 'João Pedro',
-			type: 'text',
-			autoFocus: true
+			name: 'Dados pessoais',
+			fields: [
+				{
+					name: 'name',
+					label: 'Nome:',
+					mask: '',
+					placeholder: 'João Pedro',
+					type: 'text',
+					autoFocus: true
+				},
+				{
+					name: 'lastName',
+					label: 'Sobrenome:',
+					mask: '',
+					placeholder: 'Santos Pereira',
+					type: 'text'
+				},
+				{
+					name: 'email',
+					label: 'Email:',
+					mask: '',
+					placeholder: 'example@example.com',
+					type: 'email'
+				},
+				{
+					name: 'phone',
+					label: 'Telefone: (Com DDD)',
+					mask: '(99) 99999-9999',
+					placeholder: '(71) 98888-8888',
+					type: 'tel'
+				},
+				{
+					name: 'cpf',
+					label: 'CPF:',
+					mask: '999.999.999-99',
+					placeholder: '000.000.000-00',
+					type: 'text'
+				},
+				{
+					name: 'bornIn',
+					label: 'Nascido em:',
+					mask: '',
+					placeholder: '01/01/1961',
+					type: 'date'
+				}
+			]
 		},
 		{
-			name: 'lastName',
-			label: 'Sobrenome',
-			placeholder: 'Santos Pereira',
-			type: 'text'
+			name: 'Dados de login',
+			fields: [
+				{
+					name: 'password',
+					label: 'Sua senha',
+					mask: '',
+					placeholder: '',
+					type: 'password'
+				},
+				{
+					name: 'confirmPassword',
+					label: 'Confirmação de senha',
+					mask: '',
+					placeholder: '',
+					type: 'password'
+				}
+			]
 		},
 		{
-			name: 'email',
-			label: 'Email',
-			placeholder: 'example@example.com',
-			type: 'email'
-		},
-		{
-			name: 'cpfCnpj',
-			label: 'CPF ou CNPJ',
-			placeholder: '000.000.000-00',
-			type: 'text'
-		},
-		{ name: 'password', label: 'Senha', placeholder: '', type: 'password' },
-		{
-			name: 'confirmPassword',
-			label: 'Confirmação de senha',
-			placeholder: '',
-			type: 'password'
+			name: 'Endereço',
+			fields: [
+				{
+					name: 'cep',
+					label: 'CEP:',
+					mask: '99.999-999',
+					placeholder: '40.000-000',
+					type: 'text'
+				},
+				{
+					name: 'houseNumber',
+					label: 'Número:',
+					mask: '',
+					placeholder: '428-B',
+					type: 'text'
+				}
+			]
 		}
 	]
 
@@ -93,30 +185,29 @@ export default function CadastreSe() {
 		<main
 			className={`flex flex-col p-2 items-center 
             justify-center bg-gray-900
-         w-screen h-screen min-h-full `}
+         w-screen h-[100svh] max-h-[100svh]`}
 		>
 			<HStack className=''>
 				<Flex
-					className='min-w-[70vw] lg:w-auto rounded-xl overflow-hidden max-md:max-h-[95vh]'
-					bg={'gray.700'}
+					className='min-w-[95vw] lg:w-auto rounded-xl overflow-hidden max-h-[95svh] bg-gray-800'
 					direction={{ base: 'column', md: 'row' }}
 				>
 					<Flex
-						className={`gap-4 min-h-full p-8 flex flex-col items-center justify-center
-                        md:bg-gray-800 adaptive md:text-white`}
-						bg={'transparent'}
+						className={`min-h-full gap-4 p-16 flex flex-col items-center justify-center
+                        md:bg-gray-800 forcedElement md:text-white`}
 					>
 						<Image
-							bg={'white'}
-							className='w-28 md:w-40 p-4 rounded-full'
+							overflow={'visible'}
+							className='w-40 p-4 md:rounded-full forcedElement'
 							src='/company_logo.png'
 							alt='Company logo'
 						/>
+
 						<Text className='text-md max-md:hidden'>
 							Sistema BTR Guinchos
 						</Text>
 					</Flex>
-					<Flex className='adaptive gap-4 p-8 flex-1 flex-col max-h-full overflow-auto'>
+					<Flex className='forcedElement gap-4 px-2 md: py-2 flex-1 flex-col max-h-[95vh] overflow-y-auto'>
 						<Center>
 							<Text fontSize={'2xl'}>Cadastre-se</Text>
 						</Center>
@@ -125,7 +216,11 @@ export default function CadastreSe() {
 								name: '',
 								lastName: '',
 								email: '',
-								cpfCnpj: '',
+								phone: '',
+								cpf: '',
+								bornIn: '',
+								cep: '',
+								houseNumber: '',
 								password: '',
 								confirmPassword: ''
 							}}
@@ -149,77 +244,112 @@ export default function CadastreSe() {
 								touched
 							}) => (
 								<Form
-									className='flex flex-col md:grid grid-cols-2 gap-4'
+									className='overflow-y-auto flex flex-col gap-4 p-2'
 									onSubmit={handleSubmit}
 								>
-									{fields.map((field) => (
-										<Field
-											key={field.name}
-											name={field.name}
+									{fieldsGroups.map((group) => (
+										<fieldset
+											key={group.name}
+											className='p-2 flex flex-col md:grid grid-cols-2 gap-4'
 										>
-											{() => (
-												<FormControl
-													isInvalid={
-														!!errors[field.name] &&
-														!!touched[field.name]
-													}
-												>
-													<FormLabel
-														htmlFor={field.name}
+											<legend className='text-sm text-gray-600'>
+												{group.name}
+											</legend>
+											{group.fields.map(
+												({
+													name,
+													label,
+													type,
+													autoFocus,
+													placeholder,
+													mask
+												}) => (
+													<Field
+														key={name}
+														name={name}
 													>
-														{field.label}
-													</FormLabel>
-													<Input
-														id={field.name}
-														autoFocus={
-															field.autoFocus
-														}
-														placeholder={
-															field.placeholder
-														}
-														name={field.name}
-														type={field.type}
-														value={
-															values[field.name]
-														}
-														onChange={handleChange}
-														onBlur={handleBlur}
-													/>
-													{!!errors[field.name] &&
-													touched[field.name] ? (
-														<FormHelperText color='red'>
-															{errors[field.name]}
-														</FormHelperText>
-													) : (
-														<Text color='transparent'>
-															_
-														</Text>
-													)}
-												</FormControl>
+														{() => (
+															<FormControl
+																isInvalid={
+																	!!errors[
+																		name
+																	] &&
+																	!!touched[
+																		name
+																	]
+																}
+															>
+																<FormLabel
+																	htmlFor={`${name}-input`}
+																>
+																	{label}
+																</FormLabel>
+																<ReactInputMask
+																	alwaysShowMask
+																	mask={mask}
+																	autoFocus={
+																		autoFocus
+																	}
+																	placeholder={
+																		placeholder
+																	}
+																	name={name}
+																	value={
+																		values[
+																			name
+																		]
+																	}
+																	onChange={
+																		handleChange
+																	}
+																	onBlur={
+																		handleBlur
+																	}
+																>
+																	<Input
+																		id={`${name}-input`}
+																		type={
+																			type
+																		}
+																		variant='flushed'
+																		borderColor={
+																			'blackAlpha.400'
+																		}
+																	/>
+																</ReactInputMask>
+																{!!errors[
+																	name
+																] &&
+																touched[
+																	name
+																] ? (
+																	<FormHelperText color='red'>
+																		{
+																			errors[
+																				name
+																			]
+																		}
+																	</FormHelperText>
+																) : (
+																	<Text color='transparent'>
+																		_
+																	</Text>
+																)}
+															</FormControl>
+														)}
+													</Field>
+												)
 											)}
-										</Field>
+										</fieldset>
 									))}
-									<Flex
-										direction={{
-											base: 'column',
-											md: 'row'
-										}}
-										justify={'space-between'}
-										alignItems={'center'}
+									<VStack
 										className='col-span-2 gap-2'
 										w={'full'}
 									>
-										<Link
-											flex={{ base: undefined, md: 1 }}
-											textAlign={'center'}
-											fontSize={'smaller'}
-											href='/cadastro'
-										>
-											Já tenho cadastro
-										</Link>
 										<Button
-											flex={{ base: undefined, md: 1 }}
-											w={{ base: 'full', md: undefined }}
+											flex={1}
+											w='full'
+											minH={50}
 											type='submit'
 											bg={'gray.700'}
 											colorScheme='blue'
@@ -228,7 +358,22 @@ export default function CadastreSe() {
 										>
 											Prosseguir
 										</Button>
-									</Flex>
+										<Flex
+											justify={'center'}
+											w={'full'}
+											p={5}
+										>
+											<Link
+												fontSize={{
+													base: 'medium',
+													md: 'smaller'
+												}}
+												href='/login'
+											>
+												Já tenho cadastro
+											</Link>
+										</Flex>
+									</VStack>
 								</Form>
 							)}
 						</Formik>

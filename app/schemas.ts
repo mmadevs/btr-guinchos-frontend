@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const PaymentStatus = z.enum(['notReceived', 'waitingApprovement', 'Received'])
+const PaymentStatus = z.enum(['notReceived', 'waitingApprovement', 'received'])
 
 const ServiceStatus = z.enum([
 	'notStarted',

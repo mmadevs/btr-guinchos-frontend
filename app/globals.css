@@ -10,15 +10,32 @@
     
 }
 
+.forcedElement {
+  background: #dddddd;
+}
 @media (prefers-color-scheme: dark) {
-    .adaptive {
-      background: #fff;
+    .forcedElement {
+      background: #dddddd;
     }
 }
 
 @media (forced-colors: active){
-    .adaptive {
-      background: #fff;
+    .forcedElement {
+      background: #dddddd;
+    }
+}
+.forcedBackground {
+    background: rgb(31, 41, 55);
+}
+@media (prefers-color-scheme: dark) {
+    .forcedBackground {
+        background: rgb(31, 41, 55);
+    }
+}
+
+@media (forced-colors: active){
+    .forcedBackground {
+        background: rgb(31, 41, 55);
     }
   }
 

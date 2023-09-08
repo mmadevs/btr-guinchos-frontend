@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react'
 import { Formik, Form, Field } from 'formik'
 import { useRouter } from 'next/navigation'
-import { IRegisterField } from '../types/Fields'
+import { ISignInField } from '../types/Fields'
 import { z } from 'zod'
 import { toFormikValidate } from 'zod-formik-adapter'
 import React from 'react'
@@ -32,12 +32,12 @@ export default function CadastreSe() {
 				.string()
 				.email('Insira um email válido')
 				.min(5, { message: 'Insira um email válido' }),
-			cpfCnpj: z
+			cpf: z
 				.string()
 				.refine(
 					(value) =>
 						[11, 14].includes(value.replace(/[^0-9]/g, '').length),
-					'CPF ou CNPJ inválido!'
+					'CPF ou  inválido!'
 				),
 			password: z
 				.string()
@@ -55,7 +55,7 @@ export default function CadastreSe() {
 			}
 		})
 
-	const fields: IRegisterField[] = [
+	const fields: ISignInField[] = [
 		{
 			name: 'name',
 			label: 'Nome',
@@ -76,8 +76,8 @@ export default function CadastreSe() {
 			type: 'email'
 		},
 		{
-			name: 'cpfCnpj',
-			label: 'CPF ou CNPJ',
+			name: 'cpf',
+			label: 'CPF',
 			placeholder: '000.000.000-00',
 			type: 'text'
 		},
@@ -104,7 +104,7 @@ export default function CadastreSe() {
 				>
 					<Flex
 						className={`gap-4 min-h-full p-8 flex flex-col items-center justify-center
-                        md:bg-gray-800 adaptive md:text-white`}
+                        md:bg-gray-800 forcedElement md:text-white`}
 						bg={'transparent'}
 					>
 						<Image
@@ -117,7 +117,7 @@ export default function CadastreSe() {
 							Sistema BTR Guinchos
 						</Text>
 					</Flex>
-					<Flex className='adaptive gap-4 p-8 flex-1 flex-col max-h-full overflow-auto'>
+					<Flex className='forcedElement gap-4 p-8 flex-1 flex-col max-h-full overflow-auto'>
 						<Center>
 							<Text fontSize={'2xl'}>Cadastre-se</Text>
 						</Center>
@@ -126,7 +126,7 @@ export default function CadastreSe() {
 								name: '',
 								lastName: '',
 								email: '',
-								cpfCnpj: '',
+								cpf: '',
 								password: '',
 								confirmPassword: ''
 							}}
@@ -150,7 +150,7 @@ export default function CadastreSe() {
 								touched
 							}) => (
 								<Form
-									className='flex flex-col md:grid grid-cols-2 gap-4'
+									className='flex flex-col md:grid grid-cols-2 gap-4 overflow-y-auto'
 									onSubmit={handleSubmit}
 								>
 									{fields.map((field) => (
