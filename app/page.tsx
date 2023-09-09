@@ -1,6 +1,7 @@
 'use client'
 
-import { extendTheme } from '@chakra-ui/react'
+import { Flex, Image, Text, extendTheme } from '@chakra-ui/react'
+import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
@@ -15,14 +16,29 @@ extendTheme({
 })
 export default function Home() {
 	const router = useRouter()
+	const { data: session } = useSession()
 
 	useEffect(() => {
-		router.push('/login')
-	}, [router])
+		if (session?.user) {
+			router.push('/home')
+		} else {
+			router.push('/login')
+		}
+	}, [])
 
 	return (
-		<main className='flex flex-col items-start bg-zinc-900 w-screen h-screen'>
-			voce n logou ainda
-		</main>
+		<Flex
+			className={`h-[100svh] w-full flex flex-col gap-4 items-center justify-center
+        md:bg-gray-800 text-white`}
+		>
+			<Image
+				overflow={'visible'}
+				className='w-40 p-4 md:rounded-full forcedElement'
+				src='/company_logo.png'
+				alt='Company logo'
+			/>
+			<Text className='text-4xl'>Sistema BTR Guinchos</Text>
+			<Text className='text-md italic'>Carregando...</Text>
+		</Flex>
 	)
 }

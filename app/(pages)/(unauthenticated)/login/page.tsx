@@ -211,11 +211,12 @@ import {
 	VStack
 } from '@chakra-ui/react'
 import { Formik, Form, Field } from 'formik'
-import { useRouter } from 'next/navigation'
-import { ILoginField } from '../types/Fields'
+// import { useRouter } from 'next/navigation'
+import { ILoginField } from '@/app/types/Fields'
+import { cookies } from 'next/dist/client/components/headers'
 
 export default function Login() {
-	const router = useRouter()
+	// const router = useRouter()
 
 	const fieldsGroups: { name: string; fields: ILoginField[] }[] = [
 		{
@@ -226,12 +227,14 @@ export default function Login() {
 					label: 'Email ou CPF:',
 					placeholder: 'usuario@example.com',
 					type: 'text',
+					maxLength: 60,
 					autoFocus: true
 				},
 				{
 					name: 'password',
 					label: 'Sua senha',
 					placeholder: '',
+					maxLength: 40,
 					type: 'password'
 				}
 			]
@@ -273,12 +276,49 @@ export default function Login() {
 								login: '',
 								password: ''
 							}}
-							onSubmit={(values, { setSubmitting }) => {
-								setTimeout(() => {
-									alert('Bem vindo!')
+							onSubmit={async (values, { setSubmitting }) => {
+								try {
+									const body = JSON.stringify({
+										encodedUser: Buffer.from(
+											JSON.stringify(values)
+										).toString('base64')
+									})
+
+									const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/login`
+									console.log(apiUrl, body)
+
+									const data = await fetch(apiUrl, {
+										method: 'POST',
+										body
+									})
+
+									const { user, token, refreshToken } =
+										(await data.json()) as {
+											user: {
+												name: string
+												imageUrl: string
+											}
+											token: string
+											refreshToken: string
+										}
+
+									cookies().set('user', JSON.stringify(user))
+									cookies().set(
+										'tokens',
+										JSON.stringify({ token, refreshToken })
+									)
 									setSubmitting(false)
-									router.push('/home')
-								}, 400)
+
+									// setTimeout(() => {
+									// 	alert('Bem vindo!')
+									// 	router.push('/home')
+									// }, 400)
+								} catch (err) {
+									console.error(
+										(err as Error).message,
+										(err as Error).stack
+									)
+								}
 							}}
 						>
 							{({
@@ -309,6 +349,7 @@ export default function Login() {
 													label,
 													type,
 													autoFocus,
+													maxLength,
 													placeholder
 												}) => (
 													<Field
@@ -346,6 +387,10 @@ export default function Login() {
 																		placeholder
 																	}
 																	name={name}
+																	required
+																	maxLength={
+																		maxLength
+																	}
 																	value={
 																		values[
 																			name

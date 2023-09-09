@@ -16,13 +16,13 @@ import {
 } from '@chakra-ui/react'
 import { Formik, Form, Field } from 'formik'
 import { useRouter } from 'next/navigation'
-import { ISignInField } from '../types/Fields'
+import { ISignUpField } from '@/app/types/Fields'
 import { z } from 'zod'
 import { intervalToDuration, isValid } from 'date-fns'
 import { toFormikValidate } from 'zod-formik-adapter'
 import ReactInputMask from 'react-input-mask'
 
-export default function CadastreSe() {
+export default function SignUp() {
 	const router = useRouter()
 	const Schema = z
 		.object({
@@ -92,7 +92,7 @@ export default function CadastreSe() {
 			}
 		})
 
-	const fieldsGroups: { name: string; fields: ISignInField[] }[] = [
+	const fieldsGroups: { name: string; fields: ISignUpField[] }[] = [
 		{
 			name: 'Dados pessoais',
 			fields: [
@@ -102,12 +102,14 @@ export default function CadastreSe() {
 					mask: '',
 					placeholder: 'João Pedro',
 					type: 'text',
+					maxLength: 50,
 					autoFocus: true
 				},
 				{
 					name: 'lastName',
 					label: 'Sobrenome:',
 					mask: '',
+					maxLength: 60,
 					placeholder: 'Santos Pereira',
 					type: 'text'
 				},
@@ -115,6 +117,7 @@ export default function CadastreSe() {
 					name: 'email',
 					label: 'Email:',
 					mask: '',
+					maxLength: 50,
 					placeholder: 'example@example.com',
 					type: 'email'
 				},
@@ -122,6 +125,7 @@ export default function CadastreSe() {
 					name: 'phone',
 					label: 'Telefone: (Com DDD)',
 					mask: '(99) 99999-9999',
+					maxLength: 18,
 					placeholder: '(71) 98888-8888',
 					type: 'tel'
 				},
@@ -129,6 +133,7 @@ export default function CadastreSe() {
 					name: 'cpf',
 					label: 'CPF:',
 					mask: '999.999.999-99',
+					maxLength: 18,
 					placeholder: '000.000.000-00',
 					type: 'text'
 				},
@@ -136,6 +141,7 @@ export default function CadastreSe() {
 					name: 'bornIn',
 					label: 'Nascido em:',
 					mask: '',
+					maxLength: 18,
 					placeholder: '01/01/1961',
 					type: 'date'
 				}
@@ -148,12 +154,14 @@ export default function CadastreSe() {
 					name: 'password',
 					label: 'Sua senha',
 					mask: '',
+					maxLength: 50,
 					placeholder: '',
 					type: 'password'
 				},
 				{
 					name: 'confirmPassword',
 					label: 'Confirmação de senha',
+					maxLength: 50,
 					mask: '',
 					placeholder: '',
 					type: 'password'
@@ -167,6 +175,7 @@ export default function CadastreSe() {
 					name: 'cep',
 					label: 'CEP:',
 					mask: '99.999-999',
+					maxLength: 14,
 					placeholder: '40.000-000',
 					type: 'text'
 				},
@@ -174,8 +183,45 @@ export default function CadastreSe() {
 					name: 'houseNumber',
 					label: 'Número:',
 					mask: '',
+					maxLength: 8,
 					placeholder: '428-B',
 					type: 'text'
+				},
+				{
+					name: 'street',
+					label: 'Logradouro:',
+					mask: '',
+					maxLength: 120,
+					placeholder: '',
+					type: 'text',
+					disabled: true
+				},
+				{
+					name: 'neighbourhood',
+					label: 'Bairro:',
+					maxLength: 50,
+					mask: '',
+					placeholder: '',
+					type: 'text',
+					disabled: true
+				},
+				{
+					name: 'city',
+					label: 'Cidade:',
+					maxLength: 30,
+					mask: '',
+					placeholder: '',
+					type: 'text',
+					disabled: true
+				},
+				{
+					name: 'state',
+					label: 'Estado:',
+					maxLength: 20,
+					mask: '',
+					placeholder: '',
+					type: 'text',
+					disabled: true
 				}
 			]
 		}
@@ -221,6 +267,10 @@ export default function CadastreSe() {
 								bornIn: '',
 								cep: '',
 								houseNumber: '',
+								street: '',
+								neighbourhood: '',
+								city: '',
+								state: '',
 								password: '',
 								confirmPassword: ''
 							}}
@@ -262,6 +312,8 @@ export default function CadastreSe() {
 													type,
 													autoFocus,
 													placeholder,
+													disabled,
+													maxLength,
 													mask
 												}) => (
 													<Field
@@ -287,11 +339,17 @@ export default function CadastreSe() {
 																<ReactInputMask
 																	alwaysShowMask
 																	mask={mask}
+																	maxLength={
+																		maxLength
+																	}
 																	autoFocus={
 																		autoFocus
 																	}
 																	placeholder={
 																		placeholder
+																	}
+																	disabled={
+																		disabled
 																	}
 																	name={name}
 																	value={
