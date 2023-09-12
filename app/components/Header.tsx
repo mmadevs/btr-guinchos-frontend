@@ -5,7 +5,7 @@ import { MdNotifications } from 'react-icons/md'
 export const Header: FunctionComponent = () => {
 	return (
 		<HStack
-			className='bg-zinc-800 w-16 p-2'
+			className='bg-gray-900 w-16 p-2'
 			w={'full'}
 			bg={'blackAlpha'}
 			align={'center'}

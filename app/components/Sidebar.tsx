@@ -14,23 +14,29 @@ import {
 	IconButton,
 	Divider,
 	Image,
-	Center,
-	Menu,
-	MenuButton,
-	MenuList
+	Center
+	// Menu,
+	// MenuButton,
+	// MenuList
 } from '@chakra-ui/react'
 import { useState } from 'react'
 import {
 	MdAreaChart,
 	MdEditDocument,
+	MdExitToApp,
 	MdHome,
 	MdMenu,
 	MdSettings
 } from 'react-icons/md'
 import { IconBase } from 'react-icons'
+import { useAuth } from '../context/auth'
+import { useRouter } from 'next/navigation'
 
 export const Sidebar: FunctionComponent = () => {
 	const [isOpen, setIsOpen] = useState(false)
+
+	const { user, logout } = useAuth()
+	const router = useRouter()
 
 	const buttons = [
 		{ label: 'Início', icon: <MdHome />, route: 'home' },
@@ -41,13 +47,13 @@ export const Sidebar: FunctionComponent = () => {
 
 	return (
 		<Fragment>
-			<VStack className='bg-zinc-800 w-16 p-2 h-screen'>
+			<VStack className='bg-gray-900 w-16 p-2 h-screen'>
 				<Tooltip
 					label='Menu'
 					placement='right-end'
-					closeOnClick
-					closeOnScroll
-					closeOnPointerDown
+					closeOnClick={true}
+					closeOnScroll={true}
+					closeOnPointerDown={true}
 				>
 					<IconButton
 						variant={'ghost'}
@@ -71,7 +77,11 @@ export const Sidebar: FunctionComponent = () => {
 							placement='right-end'
 						>
 							<IconButton
+								size={'lg'}
 								aria-label={button.label}
+								_hover={{ bg: 'transparent', color: 'yellow' }}
+								color='white'
+								variant={'ghost'}
 								icon={button.icon}
 							/>
 						</Tooltip>
@@ -83,10 +93,28 @@ export const Sidebar: FunctionComponent = () => {
 						borderRadius={'full'}
 						border={'1px'}
 						borderColor={'white'}
-						src='https://bit.ly/dan-abramov'
+						src={user?.imageUrl}
 						alt='User Profile'
 					/>
 				</Button>
+				<Tooltip
+					label='Sair'
+					placement='right-end'
+					closeOnClick={true}
+					closeOnScroll={true}
+					closeOnPointerDown={true}
+				>
+					<IconButton
+						variant={'ghost'}
+						color='white'
+						onClick={() => {
+							logout()
+							router.push('/login')
+						}}
+						aria-label='Sair'
+						icon={<MdExitToApp />}
+					/>
+				</Tooltip>
 			</VStack>
 			<Drawer
 				placement='left'
@@ -98,7 +126,7 @@ export const Sidebar: FunctionComponent = () => {
 				<DrawerOverlay />
 				<DrawerContent
 					background={'blackAlpha'}
-					className='bg-zinc-800'
+					className='bg-gray-900'
 				>
 					<DrawerCloseButton color={'white'} />
 					<DrawerHeader color={'white'}>
@@ -136,10 +164,10 @@ export const Sidebar: FunctionComponent = () => {
 								borderRadius={'full'}
 								boxSize={'30px'}
 								borderColor={'white'}
-								src='https://bit.ly/dan-abramov'
+								src={user?.imageUrl}
 								alt='User Profile'
 							/>
-							<Text>Dan abramovic</Text>
+							<Text>{user?.name}</Text>
 						</Button>
 					</DrawerFooter>
 				</DrawerContent>

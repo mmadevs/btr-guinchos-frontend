@@ -208,15 +208,20 @@ import {
 	Input,
 	Link,
 	Text,
-	VStack
+	VStack,
+	useToast
 } from '@chakra-ui/react'
 import { Formik, Form, Field } from 'formik'
-// import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { ILoginField } from '@/app/types/Fields'
-import { cookies } from 'next/dist/client/components/headers'
+import { useAuth } from '@/app/context/auth'
 
 export default function Login() {
-	// const router = useRouter()
+	const router = useRouter()
+
+	const { login } = useAuth()
+
+	const toast = useToast()
 
 	const fieldsGroups: { name: string; fields: ILoginField[] }[] = [
 		{
@@ -273,51 +278,38 @@ export default function Login() {
 						</Center>
 						<Formik
 							initialValues={{
-								login: '',
-								password: ''
+								login:
+									process.env.NODE_ENV === 'development'
+										? 'adminsantos@gmail.com'
+										: '',
+								password:
+									process.env.NODE_ENV === 'development'
+										? '123456'
+										: ''
 							}}
 							onSubmit={async (values, { setSubmitting }) => {
-								try {
-									const body = JSON.stringify({
-										encodedUser: Buffer.from(
-											JSON.stringify(values)
-										).toString('base64')
+								const response = await login?.(values)
+								setSubmitting(false)
+
+								console.log('resposta:', response)
+								if (response === 404) {
+									toast({
+										title: 'Erro!',
+										description: 'Usuário/Senha incorretos',
+										colorScheme: 'red',
+										position: 'top',
+										duration: 2000
 									})
-
-									const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/login`
-									console.log(apiUrl, body)
-
-									const data = await fetch(apiUrl, {
-										method: 'POST',
-										body
+								} else if (response === 500) {
+									toast({
+										title: 'Erro no servidor!',
+										description:
+											'Contate o adminstrador do sistema para detalhes.'
 									})
-
-									const { user, token, refreshToken } =
-										(await data.json()) as {
-											user: {
-												name: string
-												imageUrl: string
-											}
-											token: string
-											refreshToken: string
-										}
-
-									cookies().set('user', JSON.stringify(user))
-									cookies().set(
-										'tokens',
-										JSON.stringify({ token, refreshToken })
-									)
-									setSubmitting(false)
-
-									// setTimeout(() => {
-									// 	alert('Bem vindo!')
-									// 	router.push('/home')
-									// }, 400)
-								} catch (err) {
-									console.error(
-										(err as Error).message,
-										(err as Error).stack
-									)
+								} else if (
+									(response as { user: unknown })?.user
+								) {
+									router.push('/app/home')
 								}
 							}}
 						>
