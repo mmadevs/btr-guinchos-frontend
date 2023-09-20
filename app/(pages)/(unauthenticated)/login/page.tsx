@@ -263,7 +263,7 @@ export default function Login() {
 					direction={{ base: 'column', md: 'row' }}
 				>
 					<Flex
-						className={`min-h-full gap-4 p-16 flex flex-col items-center justify-center
+						className={`min-h-full gap-4 md:p-16 flex flex-col items-center justify-center
                         md:bg-gray-800 forcedElement md:text-white`}
 					>
 						<Image
