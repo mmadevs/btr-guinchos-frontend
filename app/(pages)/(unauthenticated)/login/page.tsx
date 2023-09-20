@@ -215,11 +215,16 @@ import { Formik, Form, Field } from 'formik'
 import { useRouter } from 'next/navigation'
 import { ILoginField } from '@/app/types/Fields'
 import { useAuth } from '@/app/context/auth'
+import { useEffect } from 'react'
 
 export default function Login() {
 	const router = useRouter()
 
-	const { login } = useAuth()
+	const { logout, login } = useAuth()
+
+	useEffect(() => {
+		logout()
+	}, []) //eslint-disable-line
 
 	const toast = useToast()
 
@@ -280,7 +285,7 @@ export default function Login() {
 							initialValues={{
 								login:
 									process.env.NODE_ENV === 'development'
-										? 'adminsantos@gmail.com'
+										? 'josefernandes@gmail.com'
 										: '',
 								password:
 									process.env.NODE_ENV === 'development'
@@ -288,28 +293,18 @@ export default function Login() {
 										: ''
 							}}
 							onSubmit={async (values, { setSubmitting }) => {
-								const response = await login?.(values)
-								setSubmitting(false)
-
-								console.log('resposta:', response)
-								if (response === 404) {
+								try {
+									await login(values)
+									setSubmitting(false)
+									router.push('/app/home')
+								} catch (err) {
 									toast({
 										title: 'Erro!',
-										description: 'Usuário/Senha incorretos',
+										description: (err as Error).message,
 										colorScheme: 'red',
 										position: 'top',
 										duration: 2000
 									})
-								} else if (response === 500) {
-									toast({
-										title: 'Erro no servidor!',
-										description:
-											'Contate o adminstrador do sistema para detalhes.'
-									})
-								} else if (
-									(response as { user: unknown })?.user
-								) {
-									router.push('/app/home')
 								}
 							}}
 						>

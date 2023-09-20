@@ -19,12 +19,12 @@ import { useRouter } from 'next/navigation'
 import { IPasswordRecoveryField } from '@/app/types/Fields'
 // import { headers } from 'next/dist/client/components/headers'
 import { useEffect, useState } from 'react'
-import { useSession } from 'next-auth/react'
+// import { useSession } from 'next-auth/react'
 
 export default function PasswordRecovery() {
 	const router = useRouter()
 	// const headersList = headers()
-	const { data: session } = useSession()
+	// const { data: session } = useSession()
 	const [fieldsGroups, setFieldsGroups] = useState<
 		{ name: string; fields: IPasswordRecoveryField[] }[]
 	>([])
@@ -32,25 +32,25 @@ export default function PasswordRecovery() {
 	useEffect(() => {
 		// const authorization = headersList.get('authorization')
 
-		if (session?.user) {
-			setFieldsGroups([])
-		} else {
-			setFieldsGroups([
-				{
-					name: '',
-					fields: [
-						{
-							name: 'cpf',
-							label: 'Informe o seu CPF:',
-							mask: '999.999.999-99',
-							placeholder: '000.000.000-00',
-							maxLength: 14,
-							type: 'text'
-						}
-					]
-				}
-			])
-		}
+		// if (session?.user) {
+		setFieldsGroups([])
+		// } else {
+		// 	setFieldsGroups([
+		// 		{
+		// 			name: '',
+		// 			fields: [
+		// 				{
+		// 					name: 'cpf',
+		// 					label: 'Informe o seu CPF:',
+		// 					mask: '999.999.999-99',
+		// 					placeholder: '000.000.000-00',
+		// 					maxLength: 14,
+		// 					type: 'text'
+		// 				}
+		// 			]
+		// 		}
+		// 	])
+		// }
 	}, []) // eslint-disable-line
 
 	return (

@@ -1,9 +1,12 @@
 'use client'
 
-import { Fragment, useEffect } from 'react'
-import { getCookies } from 'cookies-next'
+import { useLayoutEffect, useState } from 'react'
 import {
+	Circle,
+	// Avatar,
+	// AvatarBadge,
 	Flex,
+	Image,
 	Table,
 	TableContainer,
 	Tbody,
@@ -11,271 +14,412 @@ import {
 	Text,
 	Th,
 	Thead,
-	Tr
+	Tr,
+	useToast
 } from '@chakra-ui/react'
-import { FaHands, FaQuestion } from 'react-icons/fa'
-import { GiTowTruck, GiHandTruck } from 'react-icons/gi'
-import { BiSolidCarGarage } from 'react-icons/bi'
-import { MdOutlineCurrencyExchange } from 'react-icons/md'
+import { useRouter } from 'next/navigation'
+import {
+	// Person,
+	// Collect,
+	// Contract,
+	// Place,
+	// Service,
+	// Storage,
+	// Transport,
+	Trip
+} from '@/app/types'
+import { states } from '@/util/data'
+import format from 'date-fns/format'
+import ptBR from 'date-fns/locale/pt-BR'
+import Status from './Status'
+// import { IconByType } from '@/app/components/atoms/IconByType'
+import { min } from 'date-fns'
+import { IconByType } from '@/app/components/atoms/IconByType'
 import { IconBase } from 'react-icons'
-import Link from 'next/link'
+import { useApi } from '@/app/context/api'
 
 export default function Home() {
-	useEffect(() => {
-		const cookie = getCookies()
-		console.log(cookie)
-	}, [])
+	const router = useRouter()
+	const [trips, setTrips] = useState<Trip[]>([])
+	const [statuses, setStatuses] = useState<
+		{
+			type: string
+			title: string
+			subtitle: string
+			value: string
+			valueColor: string
+			url: string
+		}[]
+	>([])
+	const toast = useToast()
+	const { api } = useApi()
 
-	const services = [
-		{
-			id: '62sa6f262sa262ads',
-			type: 'Coleta',
-			client: 'Carlos Augusto',
-			inCharge: 'Marcelo Feijó',
-			vehicle: 'Fiat Uno 2016',
-			lastCheckpoint: '02/09 - Parque Ibirapuera, Ibirapurera, São Paulo'
-		},
-		{
-			id: '85a1sd1as6515v1ds5',
-			type: 'Transporte',
-			client: 'Maria José',
-			inCharge: 'Cézar Sampaio',
-			vehicle: 'Saveiro Cross 2019',
-			lastCheckpoint:
-				'31/08 - Ladeira do Jardim Zoológico, Ondina, Salvador'
-		},
-		{
-			id: 'as651sa6511c5151sda',
-			type: 'Transporte',
-			client: 'Pedro Paulo',
-			inCharge: 'Lucas De Jesus (JR Trans)',
-			vehicle: 'Fiat Palio 1999',
-			lastCheckpoint: '31/08 - Rua Madre Tereza, Caixa Dagua, Pernambuco'
-		},
-		{
-			id: '25adsa1s5d15sa5d1',
-			type: 'Entrega',
-			client: 'Luisa Silva',
-			inCharge: 'Paulo Fernandes',
-			vehicle: 'Toyota Corolla 2020',
-			lastCheckpoint: '05/09 - Av. Paulista, Bela Vista, São Paulo'
-		},
-		{
-			id: '15as1d5sa15d1sa5d',
-			type: 'Coleta',
-			client: 'João Oliveira',
-			inCharge: 'Mariana Santos',
-			vehicle: 'Honda Civic 2018',
-			lastCheckpoint: '06/09 - Rua dos Andradas, Centro, Porto Alegre'
-		},
-		{
-			id: 'a1s51da5s1da5sda5',
-			type: 'Transporte',
-			client: 'Mariano Pereira',
-			inCharge: 'Isabela Garcia',
-			vehicle: 'Volkswagen Gol 2015',
-			lastCheckpoint:
-				'04/09 - Av. Presidente Vargas, Centro, Rio de Janeiro'
-		},
-		{
-			id: 'asd5a1s5d15sa1d5sa',
-			type: 'Entrega',
-			client: 'Fernanda Santos',
-			inCharge: 'Ricardo Oliveira',
-			vehicle: 'Renault Duster 2017',
-			lastCheckpoint: '03/09 - Rua da Consolação, Consolação, São Paulo'
-		},
-		{
-			id: 'asd5as15d15d1s5d1',
-			type: 'Coleta',
-			client: 'Ana Paula',
-			inCharge: 'Marcos Fernandes',
-			vehicle: 'Ford Fiesta 2019',
-			lastCheckpoint: '07/09 - Parque do Ibirapuera, São Paulo'
-		},
-		{
-			id: 'asd1sa5d1as5d1as5d',
-			type: 'Transporte',
-			client: 'Eduardo Souza',
-			inCharge: 'Larissa Rodrigues',
-			vehicle: 'Chevrolet Onix 2017',
-			lastCheckpoint: '02/09 - Rua Augusta, Consolação, São Paulo'
-		},
-		{
-			id: 'as1d5sa15d1sa5d15a',
-			type: 'Entrega',
-			client: 'Paulo Roberto',
-			inCharge: 'Camila Oliveira',
-			vehicle: 'Hyundai Elantra 2021',
-			lastCheckpoint: '08/09 - Praia de Copacabana, Rio de Janeiro'
-		},
-		{
-			id: 'as5d15sa15d1sa5d1as',
-			type: 'Coleta',
-			client: 'Silvia Santos',
-			inCharge: 'Rogério Silva',
-			vehicle: 'Nissan Sentra 2016',
-			lastCheckpoint: '09/09 - Av. Sete de Setembro, Salvador'
-		},
-		{
-			id: '1sa5d1as5d1as5d1as',
-			type: 'Transporte',
-			client: 'Ricardo Pereira',
-			inCharge: 'Luisa Garcia',
-			vehicle: 'Toyota Camry 2019',
-			lastCheckpoint: '05/09 - Praça da Sé, São Paulo'
-		},
-		{
-			id: 'as5d1as5d1sa5d1sa5d',
-			type: 'Entrega',
-			client: 'Maria Fernanda',
-			inCharge: 'Gabriel Oliveira',
-			vehicle: 'Honda Fit 2020',
-			lastCheckpoint: '10/09 - Av. Atlântica, Copacabana, Rio de Janeiro'
-		},
-		{
-			id: '1as5d1sa5d15sa5d1as',
-			type: 'Coleta',
-			client: 'Fernando Rodrigues',
-			inCharge: 'Juliana Santos',
-			vehicle: 'Volkswagen Polo 2017',
-			lastCheckpoint: '11/09 - Rua da Aurora, Recife'
-		},
-		{
-			id: 'asd1as5d1as5d15a1s',
-			type: 'Transporte',
-			client: 'Patricia Lima',
-			inCharge: 'Roberto Fernandes',
-			vehicle: 'Ford Focus 2018',
-			lastCheckpoint: '06/09 - Av. Paulista, Bela Vista, São Paulo'
+	const loadAll = async () => {
+		try {
+			const tripsResponse = await api(`app/dashboard/trips`)
+			if (!tripsResponse?.ok) return
+
+			const statusesResponse = await api(`app/dashboard/statuses`)
+			if (!statusesResponse?.ok) return
+
+			if (tripsResponse?.ok && statusesResponse?.ok) {
+				const { trips: _trips } = await tripsResponse.json()
+				setTrips(_trips)
+
+				const { statuses: _statuses } = await statusesResponse.json()
+				setStatuses(_statuses)
+			}
+		} catch (err) {
+			console.error(err)
+			toast({ title: 'Erro!', description: (err as Error).message })
 		}
-	]
+	}
 
-	const data = [
-		{
-			icon: <FaHands />,
-			title: 'Coletas',
-			subtitle: 'Em andamento',
-			value: '5',
-			url: ''
-		},
-		{
-			icon: <BiSolidCarGarage />,
-			title: 'Armazen.',
-			subtitle: 'Em 5 pátios',
-			value: '23',
-			url: ''
-		},
-		{
-			icon: <GiTowTruck />,
-			title: 'Transp.',
-			subtitle: 'Em andamento',
-			value: '18',
-			url: ''
-		},
-		{
-			icon: <GiHandTruck />,
-			title: 'Cargas',
-			subtitle: 'Sendo montadas',
-			value: '2',
-			url: ''
-		},
-		{
-			icon: <MdOutlineCurrencyExchange />,
-			title: 'Moviment.',
-			subtitle: 'Esta semana',
-			value: '+R$ 357k',
-			valueColor: 'green',
-			url: ''
+	useLayoutEffect(() => {
+		loadAll()
+	}, []) //eslint-disable-line
+
+	const getCheckpointAddress = (trip: Trip) => {
+		const address =
+			[...trip.checkpoints].pop()?.address ?? trip?.originPoint
+
+		return {
+			title: address?.street,
+			description: address
+				? `${address.neighbourhood} - ${address.city}, ${states.find(
+						(x) => x.name === address?.state
+				  )?.UF}`
+				: undefined
 		}
-	]
+	}
+	const getStopAddress = (trip: Trip) => {
+		const address = trip.stops.find((stop) => !stop.isDone)?.address
 
-	return (
-		<Flex className='w-full max-h-full h-full flex-1 flex-col overflow-y-auto justify-start'>
-			<header className='relative w-full text-white flex flex-col'>
-				<div className='bg-gray-900 z-0 absolute top-1/2 w-full h-1/2 rounded-t-xl' />
-				<main className='self-center w-[80%] z-10 rounded-xl shadow-xl bg-gray-900 border-4 border-gray-950 py-2 px-4'>
-					<Flex className='flex-column md:flex-row gap-2'>
-						{data.map((x, i) => (
-							<Fragment key={x.title}>
-								{i > 0 && (
-									<div className='border-2 border-gray-800 opacity-50' />
-								)}
-								<Link href={x.url} className='flex-1'>
-									<Flex
-										key={x.title}
-										className='gap-2 text-center items-center justify-center'
-									>
-										<IconBase className='text-4xl text-white'>
-											{x.icon}
-										</IconBase>
-										<Flex className='flex-col justify-center'>
-											<Text className='flex-1 text-md font-bold'>
-												{x.title}
-											</Text>
-											{x.subtitle && (
-												<Text
-													className={`text-xs font-italic ${
-														x.subtitle
-															? ''
-															: 'text-transparent'
-													}`}
-												>
-													{x.subtitle ?? '. '}
-												</Text>
-											)}
+		return {
+			title: address?.street ?? '',
+			description: address
+				? `${address.neighbourhood} - ${address.city}, ${states.find(
+						(x) => x.name === address?.state
+				  )?.UF}`
+				: undefined
+		}
+	}
+	const getStopType = (trip: Trip) => {
+		const type = trip.stops.find((stop) => !stop.isDone)?.type
 
-											<Text
-												className={`text-2xl font-bold ${
-													x.valueColor === 'green'
-														? 'text-green-500'
-														: ''
-												}`}
-											>
-												{x.value}
-											</Text>
-										</Flex>
-									</Flex>
-								</Link>
-							</Fragment>
+		const value = (type ?? 'travel') + 'ing'
+		return {
+			value,
+			description:
+				value === 'collecting'
+					? 'Coletando veículo(s)...'
+					: value === 'transporting'
+					? 'Levando veículo(s)...'
+					: 'Viajando...'
+		}
+	}
+
+	const DateComponent = ({
+		date,
+		hour = false
+	}: {
+		date: Date | undefined
+		hour?: boolean
+	}) => {
+		if (!date) return <></>
+		const dateString = format(new Date(date), 'dd/MM hh:mm', {
+			locale: ptBR
+		})
+		const data = {
+			title: dateString.split(' ')[0],
+			description: hour ? dateString.split(' ')[1] : ''
+		}
+		return <TitleAndDescription data={data} />
+	}
+
+	const getNextDeadline = (trip: Trip) => {
+		if (trip.status === 'building') return trip.assemblyDeadline
+		return min(trip.stops.map((x) => new Date(x.deadline)))
+	}
+	const getLastUpdate = (trip: Trip) => {
+		const date = [...trip.checkpoints]?.pop()?.createdAt ?? trip.createdAt
+		return new Date(date)
+	}
+
+	const getNameAndLastName = (
+		name: string,
+		shortLastName: boolean = false
+	) => {
+		const arr = name.split(' ')
+		const firstName = arr[0]
+		const lastName =
+			arr.length > 1
+				? ` ${!shortLastName ? arr.pop() : arr.pop()?.split('')[0]}`
+				: ''
+
+		return firstName + lastName
+	}
+
+	const getDriver = (trip: Trip) => {
+		const { driver } = trip
+		return {
+			images: driver.imageUrl
+				? [{ name: driver.name, src: driver.imageUrl }]
+				: [],
+			title: getNameAndLastName(driver.name),
+			description: driver?.company?.name ?? '(Autônomo)'
+		}
+	}
+	const getVehicle = (trip: Trip) => {
+		const { stork } = trip
+		return {
+			images: stork.brand.imageUrl
+				? [
+						{
+							name: `${stork.brand.name} ${stork.model}`,
+							src: stork.brand.imageUrl
+						}
+				  ]
+				: [],
+			title: `${stork.brand.name} ${stork.model}`,
+			description: `${stork.plate.toLocaleUpperCase()} - ${getNameAndLastName(
+				stork.owner.name
+			)}`
+		}
+	}
+	const getClients = (trip: Trip) => {
+		const ids: Record<string, boolean> = {}
+		const clients = trip.stops
+			.map((stop) => stop.client)
+			.filter((client) => {
+				if (!ids[client.id]) {
+					ids[client.id] = true
+					return true
+				}
+				return false
+			})
+		const images = clients
+			.filter((x) => !!x.imageUrl)
+			.map((x) => ({ name: x.name, src: x.imageUrl as string }))
+
+		return {
+			images,
+			title:
+				clients.length === 1
+					? getNameAndLastName(clients[0].name)
+					: clients
+							.slice(0, 2)
+							.map((x) => getNameAndLastName(x.name, true))
+							.join(', '),
+			description:
+				clients.length > 2 ? `E mais ${clients.length - 2}` : ''
+		}
+	}
+	const getCharge = (trip: Trip) => {
+		const idsVeiculos: Record<string, boolean> = {}
+		const vehicles = trip.stops
+			.map((stop) => stop.vehicle)
+			.filter((vehicle) => {
+				const name = `${vehicle.brand.name} ${vehicle.model}`
+				if (!idsVeiculos[name]) {
+					idsVeiculos[name] = true
+					return true
+				}
+				return false
+			})
+		const idsMarcas: Record<string, boolean> = {}
+		const images = vehicles
+			.filter((x) => !!x.brand.imageUrl)
+			.filter((x) => {
+				const name = x.brand.name
+				if (!idsMarcas[name]) {
+					idsMarcas[name] = true
+					return true
+				}
+				return false
+			})
+			.map((x) => ({
+				name: `${x.brand.name} ${x.model}`,
+				src: x.brand.imageUrl as string
+			}))
+		const maximumViewed = 3
+		return {
+			images,
+			title: vehicles
+				.slice(0, maximumViewed)
+				.map((x) => x.model)
+				.join(', '),
+			description:
+				vehicles.length > maximumViewed
+					? `E mais ${vehicles.length - maximumViewed}`
+					: ''
+		}
+	}
+
+	const TitleAndDescription = ({
+		data
+	}: {
+		data: {
+			title: string
+			description?: string
+			color?: string
+			images?: { name: string; src: string }[]
+		}
+	}) => {
+		return (
+			<Flex className='items-center gap-1'>
+				{data?.images && (
+					<Flex className='inline-flex flex-row-reverse [&>*]:inline-block [&>*:not(:last-child)]:-ml-4'>
+						{data.images.map((image) => (
+							<ImageOrText key={image.name} image={image} />
 						))}
 					</Flex>
-				</main>
-			</header>
-			<main className='bg-gray-900 w-full h-auto flex-1 p-4 rounded-b-xl'>
-				<TableContainer>
-					<Table variant={'simple'} colorScheme='blue'>
+				)}
+				<Flex className='flex-col'>
+					<Text color={data.color ?? 'white'}>{data.title}</Text>
+					{!!data.description && (
+						<Text className='text-xs opacity-75'>
+							{data.description}
+						</Text>
+					)}
+				</Flex>
+			</Flex>
+		)
+	}
+
+	const ImageOrText = ({
+		image
+	}: {
+		image: { name: string; src: string }
+	}) => {
+		const [showImage, setShowImage] = useState(true)
+
+		return showImage ? (
+			<div
+				className='bg-white overflow-hidden w-8 h-8 min-w-[2rem] min-h-[2rem] max-w-[2rem] max-h-[2rem] 
+            rounded-full border-2 border-white'
+			>
+				<Image
+					key={image.src}
+					objectFit={'scale-down'}
+					className='flex-1 w-full h-full'
+					{...image}
+					onError={() => setShowImage(false)}
+					alt='_'
+				/>
+			</div>
+		) : (
+			<AvatarText name={image.name} />
+		)
+	}
+
+	const AvatarText = ({ name }: { name: string }) => {
+		const arr = name.split(' ')
+		const firstName = arr[0]
+		const lastName = arr.length > 1 ? arr.pop()?.split('')[0] : ''
+
+		return (
+			<Circle
+				bg={'gray.800'}
+				className='w-8 h-8 border-2 border-white'
+			>{`${firstName.split('')[0]}${
+				lastName ? '' : firstName.split('')[1]
+			}`}</Circle>
+		)
+	}
+
+	return (
+		<Flex className='w-full max-h-full h-full flex-1 flex-col justify-start'>
+			<Status statuses={statuses} />
+			<main
+				className='bg-gray-900 w-full h-full min-h-0 flex-1 p-4 
+            rounded-b-xl overflow-auto'
+			>
+				<TableContainer className='h-full min-w-'>
+					<Table variant={'simple'} colorScheme='blue' layout={{}}>
 						<Thead>
 							<Tr>
-								<Th></Th>
-								<Th>Cliente</Th>
-								<Th>Veículo</Th>
-								<Th>Responsável</Th>
-								<Th>Último checkpoint</Th>
+								<Th title='Status da viagem'>Stt</Th>
+								<Th title='Última atualização'>Atualiz.</Th>
+								<Th title='Cegonha / Guincho'>Veículo</Th>
+								<Th title='Motorista'>Motorista</Th>
+								<Th title='Clientes'>Clientes</Th>
+								<Th title='Carga transportada'>Carga</Th>
+								<Th title='Localização'>Localização</Th>
+								<Th title='Próximo destino'>Próximo destino</Th>
+								<Th title='Prazo mais próximo'>Prazo</Th>
+								<Th title='Data de criação'>Criado em</Th>
 							</Tr>
 						</Thead>
 						<Tbody>
-							{services.map((service) => (
-								<Tr key={service.id}>
-									<Td>
-										<IconBase title={service.type}>
-											{service.type === 'Coleta' ? (
-												<FaHands />
-											) : service.type ===
-											  'Transporte' ? (
-												<GiTowTruck />
-											) : service.type ===
-											  'Armazenamento' ? (
-												<BiSolidCarGarage />
-											) : (
-												<FaQuestion />
-											)}
+							{trips.map((trip) => (
+								<Tr
+									key={trip.id}
+									cursor={'pointer'}
+									_hover={{ bg: 'whiteAlpha.100' }}
+									onClick={() =>
+										router.push(`/app/trip/${trip.id}`)
+									}
+								>
+									<Td title={getStopType(trip).description}>
+										<IconBase className='text-2xl'>
+											<IconByType
+												type={
+													trip.status === 'traveling'
+														? getStopType(trip)
+																.value
+														: trip.status
+												}
+											/>
 										</IconBase>
 									</Td>
-									<Td>{service.client}</Td>
-									<Td>{service.vehicle}</Td>
-									<Td>{service.inCharge}</Td>
-									<Td>{service.lastCheckpoint}</Td>
+									<Td title='Última atualização'>
+										<DateComponent
+											date={getLastUpdate(trip)}
+											hour
+										/>
+									</Td>
+									<Td title='Cegonha ou guincho'>
+										<TitleAndDescription
+											data={getVehicle(trip)}
+										/>
+									</Td>
+									<Td title='Motorista'>
+										<TitleAndDescription
+											data={getDriver(trip)}
+										/>
+									</Td>
+									<Td title='Clientes'>
+										<TitleAndDescription
+											data={getClients(trip)}
+										/>
+									</Td>
+									<Td title='Carga transportada'>
+										<TitleAndDescription
+											data={getCharge(trip)}
+										/>
+									</Td>
+									<Td title='Localização atual'>
+										<TitleAndDescription
+											data={getCheckpointAddress(trip)}
+										/>
+									</Td>
+									<Td title='Próximo destino'>
+										<TitleAndDescription
+											data={getStopAddress(trip)}
+										/>
+									</Td>
+									<Td title='Prazo'>
+										<DateComponent
+											date={getNextDeadline(trip)}
+										/>
+									</Td>
+									<Td title='Data de criação da viagem'>
+										<DateComponent
+											date={trip.createdAt}
+											hour
+										/>
+									</Td>
 								</Tr>
 							))}
 						</Tbody>

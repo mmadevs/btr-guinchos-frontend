@@ -4,15 +4,18 @@ import { ChakraProvider } from '@chakra-ui/react'
 // import AuthenticatedLayout from '@/app/components/templates/AuthenticatedLayout'
 // import UnauthenticatedLayout from '@/app/components/templates/UnauthenticatedLayout'
 import { AuthProvider } from '@/app/context/auth'
+import { ApiProvider } from '@/app/context/api'
 
 const Providers: FunctionComponent<{ children: ReactNode }> = ({
 	children
 }) => {
 	return (
 		<ChakraProvider>
-			<AuthProvider>
-				<>{children}</>
-			</AuthProvider>
+			<ApiProvider>
+				<AuthProvider>
+					<>{children}</>
+				</AuthProvider>
+			</ApiProvider>
 		</ChakraProvider>
 	)
 }

@@ -1,6 +1,7 @@
 export interface Person {
 	id: string
 	name: string
+	tags: string[]
 	email: string
 	phone: string
 	address: Place
@@ -43,16 +44,18 @@ export interface User extends Individual {
 	level: number
 }
 
-export interface LotKeeper extends Individual {
-	company: Company
-}
-
 export interface Driver extends Individual {
 	company?: Company
 	license: DriverLicense
 }
 
 export interface Brand {
+	id: string
+	name: string
+	imageUrl?: string
+}
+
+export interface VehicleObjects {
 	id: string
 	name: string
 	imageUrl?: string
@@ -65,6 +68,7 @@ export interface Vehicle {
 	model: string
 	modelOf: Date
 	madeIn: Date
+	color: string
 	plate: string
 	chassis: string
 	document: AppDocument
@@ -151,29 +155,102 @@ export interface Voucher extends DetailedPrice {
 }
 
 enum ServiceStatus {
-	'notStarted',
-	'started',
-	'paused',
-	'cancelled',
-	'finished'
+	'waiting' = 0,
+	'started' = 1,
+	'finished' = 2
 }
 
 export interface Inspection {
-	inCharge: LotKeeper | Driver
+	inCharge: User | Driver
 	imagesUrl: string[]
-	documentation: string
-	kilometersDriven: number
-	color: string
-	breakdowns: string
+	keys: number
+	thereIs: {
+		digitalClock: boolean
+		airConditioning: boolean
+		gigaretteLighter: boolean
+		originalDocument: boolean
+		manual: boolean
+		radio: {
+			amFm: boolean
+			bluetooth: boolean
+			tapePlayer: boolean
+			cd: boolean
+			dvd: boolean
+		}
+		antennas: {
+			internal: boolean
+			common: boolean
+			electric: boolean
+		}
+	}
+
+	seatBelt: boolean
+	rugs: {
+		common: boolean
+		special: boolean
+	}
+	breakdowns: {
+		position: string
+		type: 'kneaded' | 'scratched' | 'broken'
+		description: string
+	}[]
 	windows: string
 	seats: string
-	locks: string
-	oilLevel: string
-	lights: string
-	tires: string
+	locks: {
+		position: 'frontLeft' | 'frontRight' | 'backLeft' | 'backRight'
+		isWorking: boolean
+	}[]
+	levels: {
+		horn: boolean
+		painting: number
+		carpet: number
+		seats: number
+		lining: number
+		oil: number
+		battery: number
+		fuel: {
+			type:
+				| 'gasoline'
+				| 'alcohol'
+				| 'diesel'
+				| 'etanol'
+				| 'gnv'
+				| 'electric'
+			value: number
+		}[]
+		kilometersDriven: number
+	}
+	lights: {
+		break: boolean
+		headlight: boolean
+	}
+	hubcap: {
+		common: boolean
+		special: boolean
+	}
+	wheel: {
+		common: boolean
+		special: boolean
+	}
+	speakers: boolean
+	battery: boolean
+	gas: boolean
+	tires: {
+		position:
+			| 'frontLeft'
+			| 'frontRight'
+			| 'backLeft'
+			| 'backRight'
+			| 'spare'
+		level: number
+		brand: string
+		type: string
+	}[]
 	suspension: string
 	alignment: string
 	balancing: string
+	objects: VehicleObjects[]
+	comments?: string
 	createdAt: Date
 }
 
@@ -186,7 +263,7 @@ export interface Transport extends Service {
 	driver: Driver
 	originPoint: Place
 	destinyPoint: Place
-	checkpoints: Checkpoint[]
+	stork?: Vehicle
 }
 export interface Collect extends Transport {
 	collectPoint: Place
@@ -196,11 +273,13 @@ export interface Service {
 	id: string
 	deadline?: Date
 	forecast: Date
+	type: 'collect' | 'transport' | 'storage'
 	priority: boolean
 	inspections: Inspection[]
 	basePrice: number
 	additions: DetailedPrice[]
 	discounts: DetailedPrice[]
+	checkpoints: Checkpoint[]
 	vehicle: Vehicle
 	getFinalPrice: () => number
 	status: ServiceStatus
@@ -225,6 +304,33 @@ export interface Charge {
 	vehicles: Vehicle[]
 	maxVehicles: number
 	createdAt: Date
+}
+
+export interface Trip {
+	id: string
+	driver: Driver
+	stork: Vehicle
+	assemblyDeadline: Date
+	originPoint: Place
+	status:
+		| 'created'
+		| 'building'
+		| 'ready'
+		| 'traveling'
+		| 'arrived'
+		| 'returning'
+		| 'finished'
+	stops: TripStop[]
+	checkpoints: Checkpoint[]
+	createdAt: Date
+}
+export interface TripStop {
+	type: 'collect' | 'delivery'
+	client: Person
+	vehicle: Vehicle
+	address: Place
+	deadline: Date
+	isDone: boolean
 }
 
 export interface AppNotification {

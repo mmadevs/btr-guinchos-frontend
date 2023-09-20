@@ -1,4 +1,4 @@
-import { FunctionComponent, Fragment } from 'react'
+import { FunctionComponent, Fragment, useEffect } from 'react'
 import {
 	Drawer,
 	DrawerBody,
@@ -20,34 +20,26 @@ import {
 	// MenuList
 } from '@chakra-ui/react'
 import { useState } from 'react'
-import {
-	MdAreaChart,
-	MdEditDocument,
-	MdExitToApp,
-	MdHome,
-	MdMenu,
-	MdSettings
-} from 'react-icons/md'
+import { MdExitToApp, MdMenu, MdPerson } from 'react-icons/md'
 import { IconBase } from 'react-icons'
-import { useAuth } from '../context/auth'
+import { useAuth } from '../../context/auth'
 import { useRouter } from 'next/navigation'
+import { menuButtons } from '@/util/data'
 
 export const Sidebar: FunctionComponent = () => {
 	const [isOpen, setIsOpen] = useState(false)
+	const [imageUrl, setImageUrl] = useState<string | undefined>()
 
 	const { user, logout } = useAuth()
 	const router = useRouter()
 
-	const buttons = [
-		{ label: 'Início', icon: <MdHome />, route: 'home' },
-		{ label: 'Cadastros', icon: <MdEditDocument />, route: 'cadastros' },
-		{ label: 'Relatórios', icon: <MdAreaChart />, route: 'relatorios' },
-		{ label: 'Ajustes', icon: <MdSettings />, route: 'ajustes' }
-	]
+	useEffect(() => {
+		if (user?.imageUrl) setImageUrl(user?.imageUrl)
+	}, [user])
 
 	return (
 		<Fragment>
-			<VStack className='bg-gray-900 w-16 p-2 h-screen'>
+			<VStack className='bg-gray-900 w-16 p-2 h-screen hidden'>
 				<Tooltip
 					label='Menu'
 					placement='right-end'
@@ -70,7 +62,7 @@ export const Sidebar: FunctionComponent = () => {
 				/>
 				<Divider />
 				<VStack className='py-5 flex-1'>
-					{buttons.map((button) => (
+					{menuButtons.map((button) => (
 						<Tooltip
 							key={button.route}
 							label={button.label}
@@ -82,20 +74,33 @@ export const Sidebar: FunctionComponent = () => {
 								_hover={{ bg: 'transparent', color: 'yellow' }}
 								color='white'
 								variant={'ghost'}
-								icon={button.icon}
+								icon={<button.icon />}
 							/>
 						</Tooltip>
 					))}
 				</VStack>
 				<Divider />
-				<Button p={2} bg={'transparent'}>
-					<Image
-						borderRadius={'full'}
-						border={'1px'}
-						borderColor={'white'}
-						src={user?.imageUrl}
-						alt='User Profile'
-					/>
+				<Button
+					p={2}
+					bg={'transparent'}
+					className='relative w-15 h-15 aspect-square'
+				>
+					{imageUrl ? (
+						<Image
+							borderRadius={'full'}
+							border={'1px'}
+							borderColor={'white'}
+							src={imageUrl}
+							className='aspect-square'
+							alt='User Profile'
+							objectFit={'cover'}
+							onError={() => setImageUrl(undefined)}
+						/>
+					) : (
+						<IconBase className='text-white text-2xl'>
+							<MdPerson />
+						</IconBase>
+					)}
 				</Button>
 				<Tooltip
 					label='Sair'
@@ -142,7 +147,7 @@ export const Sidebar: FunctionComponent = () => {
 					<Divider />
 					<DrawerBody>
 						<VStack className='py-5'>
-							{buttons.map((button) => (
+							{menuButtons.map((button) => (
 								<Button
 									key={button.route}
 									className='w-full hover:text-black'
@@ -150,7 +155,7 @@ export const Sidebar: FunctionComponent = () => {
 									color={'white'}
 								>
 									<IconBase className='text-3xl'>
-										{button.icon}
+										{<button.icon />}
 									</IconBase>
 									<Text flex={1}>{button.label}</Text>
 								</Button>
@@ -169,6 +174,25 @@ export const Sidebar: FunctionComponent = () => {
 							/>
 							<Text>{user?.name}</Text>
 						</Button>
+						<Tooltip
+							label='Sair'
+							placement='right-end'
+							closeOnClick={true}
+							closeOnScroll={true}
+							closeOnPointerDown={true}
+						>
+							<IconButton
+								variant={'ghost'}
+								color='white'
+								_hover={{ bg: 'transparent', color: 'yellow' }}
+								onClick={() => {
+									logout()
+									router.push('/login')
+								}}
+								aria-label='Sair'
+								icon={<MdExitToApp />}
+							/>
+						</Tooltip>
 					</DrawerFooter>
 				</DrawerContent>
 			</Drawer>
