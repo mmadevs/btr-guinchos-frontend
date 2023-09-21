@@ -41,6 +41,7 @@ export interface Permissions {
 export interface User extends Individual {
 	passwordHash: string
 	permissions: Permissions
+	notifications: UserNotification[]
 	level: number
 }
 
@@ -335,21 +336,22 @@ export interface TripStop {
 
 export interface AppNotification {
 	id: string
-	shortName: string
-	fullName: string
-	description: string
-	viewedBy: User[]
-	imgUrl?: string
-	type: AppNotificationType
-	url: string
+	title: string
+	subtitle: string
+	description?: string
+	type:
+		| 'tripCheckpoint'
+		| 'closeTripDeadline'
+		| 'closeServiceDeadline'
+		| 'closeDeadline'
+		| 'closeExpiration'
+		| 'requestedBudget'
+	value: string
 	createdAt: Date
 }
-
-export interface AppNotificationType {
-	id: string
-	name: string
-	readonly icon: string
-	createdAt: Date
+export interface UserNotification extends AppNotification {
+	status: 'unseen' | 'seen' | 'opened'
+	archivedUntil?: Date
 }
 
 export interface Payment {

@@ -1,12 +1,14 @@
 import { BiSolidCarGarage } from 'react-icons/bi'
-import { FaHands, FaRoute } from 'react-icons/fa'
+import { FaHands, FaQuestion, FaRoute } from 'react-icons/fa'
 import { GiHandTruck, GiTowTruck } from 'react-icons/gi'
 import { MdDoneAll, MdOutlineCurrencyExchange } from 'react-icons/md'
-import { BsFillCartCheckFill } from 'react-icons/bs'
+import { BsCalendarEventFill, BsFillCartCheckFill } from 'react-icons/bs'
+import { RiPassExpiredFill } from 'react-icons/ri'
 import { PiFolderOpenLight } from 'react-icons/pi'
-import { TbTruckReturn } from 'react-icons/tb'
-import { FaTruckArrowRight } from 'react-icons/fa6'
-import { IcoArrived, IcoBuildingTruck } from './icons'
+import { CgTimelapse } from 'react-icons/cg'
+import { TbTruckReturn, TbZoomMoney } from 'react-icons/tb'
+import { FaLocationDot, FaTruckArrowRight } from 'react-icons/fa6'
+import { IcoArrived, IcoBuildingTruck, IcoTripDeadline } from './icons'
 
 /**
  *
@@ -45,7 +47,21 @@ export const IconByType = ({ type }: { type: string }) => {
 			return <TbTruckReturn />
 		case 'traveling':
 			return <FaTruckArrowRight />
+		case 'tripCheckpoint':
+			return <FaLocationDot />
+		case 'tripArrived':
+			return <IcoArrived />
+		case 'closeTripDeadline':
+			return <IcoTripDeadline />
+		case 'closeServiceDeadline':
+			return <CgTimelapse />
+		case 'closeDeadline':
+			return <BsCalendarEventFill />
+		case 'closeExpiration':
+			return <RiPassExpiredFill />
+		case 'requestedBudget':
+			return <TbZoomMoney />
 		default:
-			return <></>
+			return <FaQuestion />
 	}
 }

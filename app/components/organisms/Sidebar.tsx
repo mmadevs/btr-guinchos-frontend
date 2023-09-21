@@ -22,9 +22,10 @@ import {
 import { useState } from 'react'
 import { MdExitToApp, MdMenu, MdPerson } from 'react-icons/md'
 import { IconBase } from 'react-icons'
-import { useAuth } from '../../context/auth'
-import { useRouter } from 'next/navigation'
+import { useAuth } from '@/app/context/auth'
+import { usePathname, useRouter } from 'next/navigation'
 import { menuButtons } from '@/util/data'
+import { SidebarButton } from '@/app/components/molecules/SidebarButton'
 
 export const Sidebar: FunctionComponent = () => {
 	const [isOpen, setIsOpen] = useState(false)
@@ -32,7 +33,14 @@ export const Sidebar: FunctionComponent = () => {
 
 	const { user, logout } = useAuth()
 	const router = useRouter()
+	const pathname = usePathname()
 
+	const userButton = {
+		imageUrl: imageUrl,
+		icon: MdPerson,
+		label: user?.name ?? 'Usuário',
+		route: `/app/usuario/${user?.id}`
+	}
 	useEffect(() => {
 		if (user?.imageUrl) setImageUrl(user?.imageUrl)
 	}, [user])
@@ -40,21 +48,14 @@ export const Sidebar: FunctionComponent = () => {
 	return (
 		<Fragment>
 			<VStack className='bg-gray-900 w-16 p-2 h-screen hidden'>
-				<Tooltip
-					label='Menu'
-					placement='right-end'
-					closeOnClick={true}
-					closeOnScroll={true}
-					closeOnPointerDown={true}
-				>
-					<IconButton
-						variant={'ghost'}
-						color='white'
-						onClick={() => setIsOpen(true)}
-						aria-label='Menu'
-						icon={<MdMenu />}
-					/>
-				</Tooltip>
+				<SidebarButton
+					button={{
+						icon: MdMenu,
+						label: 'Menu',
+						onClick: () => setIsOpen(true)
+					}}
+					size='xl'
+				/>
 				<Image
 					src='/company_logo.png'
 					boxSize={'50px'}
@@ -63,63 +64,28 @@ export const Sidebar: FunctionComponent = () => {
 				<Divider />
 				<VStack className='py-5 flex-1'>
 					{menuButtons.map((button) => (
-						<Tooltip
+						<SidebarButton
 							key={button.route}
-							label={button.label}
-							placement='right-end'
-						>
-							<IconButton
-								size={'lg'}
-								aria-label={button.label}
-								_hover={{ bg: 'transparent', color: 'yellow' }}
-								color='white'
-								variant={'ghost'}
-								icon={<button.icon />}
-							/>
-						</Tooltip>
+							active={pathname.startsWith(button.route)}
+							button={button}
+							size='xl'
+						/>
 					))}
 				</VStack>
 				<Divider />
-				<Button
-					p={2}
-					bg={'transparent'}
-					className='relative w-15 h-15 aspect-square'
-				>
-					{imageUrl ? (
-						<Image
-							borderRadius={'full'}
-							border={'1px'}
-							borderColor={'white'}
-							src={imageUrl}
-							className='aspect-square'
-							alt='User Profile'
-							objectFit={'cover'}
-							onError={() => setImageUrl(undefined)}
-						/>
-					) : (
-						<IconBase className='text-white text-2xl'>
-							<MdPerson />
-						</IconBase>
-					)}
-				</Button>
-				<Tooltip
-					label='Sair'
-					placement='right-end'
-					closeOnClick={true}
-					closeOnScroll={true}
-					closeOnPointerDown={true}
-				>
-					<IconButton
-						variant={'ghost'}
-						color='white'
-						onClick={() => {
-							logout()
-							router.push('/login')
-						}}
-						aria-label='Sair'
-						icon={<MdExitToApp />}
-					/>
-				</Tooltip>
+				<SidebarButton
+					button={userButton}
+					active={pathname.startsWith(userButton.route)}
+					size='2xl'
+				/>
+				<SidebarButton
+					button={{
+						icon: MdExitToApp,
+						label: 'Sair',
+						onClick: logout
+					}}
+					size='xl'
+				/>
 			</VStack>
 			<Drawer
 				placement='left'

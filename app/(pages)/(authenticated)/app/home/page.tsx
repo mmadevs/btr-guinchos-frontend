@@ -3,11 +3,10 @@
 import { useLayoutEffect, useState } from 'react'
 import {
 	Circle,
-	// Avatar,
-	// AvatarBadge,
 	Flex,
 	Image,
 	Table,
+	TableCaption,
 	TableContainer,
 	Tbody,
 	Td,
@@ -37,6 +36,7 @@ import { min } from 'date-fns'
 import { IconByType } from '@/app/components/atoms/IconByType'
 import { IconBase } from 'react-icons'
 import { useApi } from '@/app/context/api'
+import { FloatButton } from '@/app/components/atoms/FloatButton'
 
 export default function Home() {
 	const router = useRouter()
@@ -329,14 +329,17 @@ export default function Home() {
 	}
 
 	return (
-		<Flex className='w-full max-h-full h-full flex-1 flex-col justify-start'>
+		<Flex className='relative w-full max-h-full h-full flex-1 flex-col justify-start'>
 			<Status statuses={statuses} />
 			<main
-				className='bg-gray-900 w-full h-full min-h-0 flex-1 p-4 
+				className='bg-gray-900 w-full h-full min-h-0 flex-1 
             rounded-b-xl overflow-auto'
 			>
-				<TableContainer className='h-full min-w-'>
-					<Table variant={'simple'} colorScheme='blue' layout={{}}>
+				<TableContainer className='min-h-full h-min w-min pb-12 pr-12'>
+					<Table variant={'simple'} colorScheme='blue'>
+						<TableCaption>
+							Viagens em execução: {trips.length}
+						</TableCaption>
 						<Thead>
 							<Tr>
 								<Th title='Status da viagem'>Stt</Th>
@@ -352,11 +355,28 @@ export default function Home() {
 							</Tr>
 						</Thead>
 						<Tbody>
-							{trips.map((trip) => (
+							{[
+								...trips,
+								...trips,
+								...trips,
+								...trips,
+								...trips,
+								...trips,
+								...trips,
+								...trips,
+								...trips,
+								...trips,
+								...trips,
+								...trips,
+								...trips
+							].map((trip, i) => (
 								<Tr
 									key={trip.id}
 									cursor={'pointer'}
 									_hover={{ bg: 'whiteAlpha.100' }}
+									bg={
+										i % 2 === 0 ? 'transparent' : 'gray.900'
+									}
 									onClick={() =>
 										router.push(`/app/trip/${trip.id}`)
 									}
@@ -426,6 +446,7 @@ export default function Home() {
 					</Table>
 				</TableContainer>
 			</main>
+			<FloatButton>+</FloatButton>
 		</Flex>
 	)
 }

@@ -41,8 +41,8 @@ export const tripStatus = {
 }
 
 export const menuButtons: { label: string; icon: IconType; route: string }[] = [
-	{ label: 'Início', icon: MdHome, route: 'home' },
-	{ label: 'Cadastros', icon: MdEditDocument, route: 'cadastros' },
-	{ label: 'Relatórios', icon: MdAreaChart, route: 'relatorios' },
-	{ label: 'Ajustes', icon: MdSettings, route: 'ajustes' }
+	{ label: 'Início', icon: MdHome, route: '/app/home' },
+	{ label: 'Cadastros', icon: MdEditDocument, route: '/app/cadastros' },
+	{ label: 'Relatórios', icon: MdAreaChart, route: '/app/relatorios' },
+	{ label: 'Ajustes', icon: MdSettings, route: '/app/ajustes' }
 ]

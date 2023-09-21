@@ -5,27 +5,33 @@ import {
 	ReactNode,
 	createContext,
 	useContext,
+	useEffect,
 	useLayoutEffect,
 	useState
 } from 'react'
 import { useApi } from './api'
+import { UserNotification } from '../types'
 
 interface IAuthUser {
+	id: string
 	name: string
 	imageUrl: string
 	email: string
+	notifications: UserNotification[]
 }
-const AuthContext = createContext<{
+
+interface IAuthContext {
 	user?: IAuthUser
 	isLoaded: boolean
-	login:
-		| ((values: {
-				login: string
-				password: string
-		  }) => Promise<IAuthUser | void>)
-		| (() => void)
+	login: (values: {
+		login: string
+		password: string
+	}) => Promise<IAuthUser | void>
+
 	logout: () => void
-}>({ isLoaded: false, login: () => {}, logout: () => {} })
+}
+
+const AuthContext = createContext<IAuthContext>({} as IAuthContext)
 
 export const AuthProvider: FunctionComponent<{ children: ReactNode }> = ({
 	children
@@ -37,12 +43,35 @@ export const AuthProvider: FunctionComponent<{ children: ReactNode }> = ({
 	useLayoutEffect(() => {
 		const storedUser = localStorage.getItem('user')
 
-		if (storedUser) {
-			setUser(JSON.parse(storedUser))
-		}
+		if (storedUser) setUser(JSON.parse(storedUser))
+
 		setIsLoaded(true)
-		// authenticate()
 	}, [])
+
+	const updateNotifications = async () => {
+		if (user) {
+			const response = await api('app/notifications', 'GET')
+
+			if (response?.ok) {
+				const { notifications } = (await response.json()) as {
+					notifications: UserNotification[]
+				}
+
+				setUser((prev) => (prev ? { ...prev, notifications } : prev))
+				return notifications
+			}
+		}
+	}
+
+	useEffect(() => {
+		let timer: NodeJS.Timer | undefined = undefined
+		if (user) {
+			timer = setInterval(() => {
+				updateNotifications()
+			}, 30 * 1000)
+		}
+		return () => clearInterval(timer)
+	}, [user]) //eslint-disable-line
 
 	const router = useRouter()
 	useLayoutEffect(() => {
@@ -63,12 +92,14 @@ export const AuthProvider: FunctionComponent<{ children: ReactNode }> = ({
 		const response = await api('login', 'POST', body)
 
 		if (response?.ok) {
-			const { user } = (await response.json()) as {
+			const { user: userResponse } = (await response.json()) as {
 				user: IAuthUser
 			}
-			setUser(user)
-			localStorage.setItem('user', JSON.stringify(user))
-			return user
+
+			console.log('response', userResponse)
+			setUser(userResponse)
+			localStorage.setItem('user', JSON.stringify(userResponse))
+			return userResponse
 		} else {
 			if (response?.status == 500) {
 				throw new Error('Ocorreu um erro no servidor!')
@@ -81,6 +112,7 @@ export const AuthProvider: FunctionComponent<{ children: ReactNode }> = ({
 	const logout = () => {
 		setUser(undefined)
 		localStorage.removeItem('user')
+		router.push('/login')
 	}
 
 	return (

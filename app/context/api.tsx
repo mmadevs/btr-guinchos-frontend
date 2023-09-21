@@ -39,6 +39,14 @@ export const ApiProvider: FunctionComponent<{ children: ReactNode }> = ({
 					colorScheme: 'red'
 				})
 				router.push('/login')
+			} else if (response.status === 500) {
+				toast({
+					title: 'Oops!',
+					description:
+						'Erro interno no servidor! Tente novamente mais tarde.',
+					colorScheme: 'red'
+				})
+				router.push('/login')
 			} else {
 				return await response
 			}

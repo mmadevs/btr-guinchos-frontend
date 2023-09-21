@@ -1,75 +1,35 @@
-import { FunctionComponent, useState } from 'react'
-import { Tooltip, IconButton, Center, Image, Avatar } from '@chakra-ui/react'
+import { FunctionComponent } from 'react'
+import { Center } from '@chakra-ui/react'
 import { menuButtons } from '@/util/data'
-import { IconType } from 'react-icons'
 import { MdPerson } from 'react-icons/md'
 import { useAuth } from '@/app/context/auth'
+import { SidebarButton } from '@/app/components/molecules/SidebarButton'
+import { usePathname } from 'next/navigation'
 
 export const Footer: FunctionComponent = () => {
 	const { user } = useAuth()
+	const pathname = usePathname()
+	const userButton = {
+		imageUrl: user?.imageUrl,
+		icon: MdPerson,
+		label: 'Usuário',
+		route: `/app/usuario/${user?.id}`
+	}
 	return (
 		<Center as='footer' className='bg-gray-900 w-full p-2 gap-4'>
 			{menuButtons.map((button) => (
-				<MenuButton key={button.route} button={button} size='3xl' />
+				<SidebarButton
+					key={button.route}
+					button={button}
+					size='3xl'
+					active={pathname.startsWith(button.route)}
+				/>
 			))}
-			<MenuButton
-				button={{
-					imageUrl: user?.imageUrl,
-					icon: MdPerson,
-					label: 'Usuário',
-					route: ''
-				}}
+			<SidebarButton
+				button={userButton}
+				active={pathname.startsWith(userButton.route)}
 				size='3xl'
 			/>
 		</Center>
-	)
-}
-
-const MenuButton = ({
-	button,
-	size = 'lg'
-}: {
-	button: {
-		imageUrl?: string
-		route: string
-		label: string
-		icon: IconType
-	}
-	size?: 'lg' | 'xl' | '2xl' | '3xl' | '4xl'
-}) => {
-	const [showImage, setShowImage] = useState(true)
-	return (
-		<Tooltip label={button.label} placement='right-end'>
-			{showImage && button.imageUrl ? (
-				<Avatar
-					size={'sm'}
-					aria-label={button.label}
-					_hover={{ bg: 'transparent', color: 'yellow' }}
-					color='white'
-					variant={'ghost'}
-					className='rounded-full overflow-hidden'
-					border={'2px'}
-					fontSize={size}
-				>
-					{button.imageUrl && (
-						<Image
-							src={button.imageUrl}
-							alt='Profile'
-							onError={() => setShowImage(false)}
-						/>
-					)}
-				</Avatar>
-			) : (
-				<IconButton
-					size={'lg'}
-					aria-label={button.label}
-					_hover={{ bg: 'transparent', color: 'yellow' }}
-					color='white'
-					variant={'ghost'}
-					fontSize={size}
-					icon={<button.icon />}
-				/>
-			)}
-		</Tooltip>
 	)
 }
