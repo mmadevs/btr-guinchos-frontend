@@ -1,5 +1,5 @@
 'use client'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import {
 	FunctionComponent,
 	ReactNode,
@@ -74,11 +74,12 @@ export const AuthProvider: FunctionComponent<{ children: ReactNode }> = ({
 	}, [user]) //eslint-disable-line
 
 	const router = useRouter()
+	const pathname = usePathname()
 	useLayoutEffect(() => {
 		if (isLoaded) {
-			if (user) {
+			if (user && !pathname.startsWith('/app')) {
 				router.push('/app/home')
-			} else {
+			} else if (!user) {
 				router.push('/login')
 			}
 		}

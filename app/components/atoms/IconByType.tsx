@@ -1,5 +1,5 @@
 import { BiSolidCarGarage } from 'react-icons/bi'
-import { FaHands, FaQuestion, FaRoute } from 'react-icons/fa'
+import { FaFileContract, FaHands, FaQuestion, FaRoute } from 'react-icons/fa'
 import { GiHandTruck, GiTowTruck } from 'react-icons/gi'
 import { MdDoneAll, MdOutlineCurrencyExchange } from 'react-icons/md'
 import { BsCalendarEventFill, BsFillCartCheckFill } from 'react-icons/bs'
@@ -8,6 +8,7 @@ import { PiFolderOpenLight } from 'react-icons/pi'
 import { CgTimelapse } from 'react-icons/cg'
 import { TbTruckReturn, TbZoomMoney } from 'react-icons/tb'
 import { FaLocationDot, FaTruckArrowRight } from 'react-icons/fa6'
+import { AiFillCalculator } from 'react-icons/ai'
 import { IcoArrived, IcoBuildingTruck, IcoTripDeadline } from './icons'
 
 /**
@@ -17,6 +18,10 @@ import { IcoArrived, IcoBuildingTruck, IcoTripDeadline } from './icons'
  */
 export const IconByType = ({ type }: { type: string }) => {
 	switch (type) {
+		case 'budget':
+			return <AiFillCalculator />
+		case 'contract':
+			return <FaFileContract />
 		case 'transport':
 			return <GiTowTruck />
 		case 'collect':

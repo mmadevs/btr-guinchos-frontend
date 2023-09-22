@@ -3,8 +3,8 @@ export interface Person {
 	name: string
 	tags: string[]
 	email: string
-	phone: string
-	address: Place
+	phones: string[]
+	addresses: Place[]
 	imageUrl?: string
 	createdAt: Date
 }
@@ -66,6 +66,7 @@ export interface Vehicle {
 	id: string
 	imageUrl?: string
 	brand: Brand
+	version?: string
 	model: string
 	modelOf: Date
 	madeIn: Date

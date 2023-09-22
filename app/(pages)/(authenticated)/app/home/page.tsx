@@ -1,42 +1,37 @@
 'use client'
 
-import { useLayoutEffect, useState } from 'react'
+import { ReactNode, useLayoutEffect, useState } from 'react'
 import {
-	Circle,
 	Flex,
-	Image,
+	IconButton,
+	Menu,
+	MenuButton,
+	MenuDivider,
+	MenuItem,
+	MenuList,
 	Table,
 	TableCaption,
 	TableContainer,
 	Tbody,
 	Td,
-	Text,
 	Th,
 	Thead,
 	Tr,
 	useToast
 } from '@chakra-ui/react'
 import { useRouter } from 'next/navigation'
-import {
-	// Person,
-	// Collect,
-	// Contract,
-	// Place,
-	// Service,
-	// Storage,
-	// Transport,
-	Trip
-} from '@/app/types'
+import { Trip } from '@/app/types'
 import { states } from '@/util/data'
 import format from 'date-fns/format'
 import ptBR from 'date-fns/locale/pt-BR'
 import Status from './Status'
-// import { IconByType } from '@/app/components/atoms/IconByType'
 import { min } from 'date-fns'
 import { IconByType } from '@/app/components/atoms/IconByType'
 import { IconBase } from 'react-icons'
 import { useApi } from '@/app/context/api'
-import { FloatButton } from '@/app/components/atoms/FloatButton'
+import { formatVehicle, getNameAndLastName } from '@/util/format'
+import { MyListItem } from '@/app/components/molecules/MyListItem'
+import { FaPlus } from 'react-icons/fa'
 
 export default function Home() {
 	const router = useRouter()
@@ -119,22 +114,14 @@ export default function Home() {
 		}
 	}
 
-	const DateComponent = ({
-		date,
-		hour = false
-	}: {
-		date: Date | undefined
-		hour?: boolean
-	}) => {
-		if (!date) return <></>
+	const getDate = (date: Date, hour = false) => {
 		const dateString = format(new Date(date), 'dd/MM hh:mm', {
 			locale: ptBR
 		})
-		const data = {
+		return {
 			title: dateString.split(' ')[0],
 			description: hour ? dateString.split(' ')[1] : ''
 		}
-		return <TitleAndDescription data={data} />
 	}
 
 	const getNextDeadline = (trip: Trip) => {
@@ -144,20 +131,6 @@ export default function Home() {
 	const getLastUpdate = (trip: Trip) => {
 		const date = [...trip.checkpoints]?.pop()?.createdAt ?? trip.createdAt
 		return new Date(date)
-	}
-
-	const getNameAndLastName = (
-		name: string,
-		shortLastName: boolean = false
-	) => {
-		const arr = name.split(' ')
-		const firstName = arr[0]
-		const lastName =
-			arr.length > 1
-				? ` ${!shortLastName ? arr.pop() : arr.pop()?.split('')[0]}`
-				: ''
-
-		return firstName + lastName
 	}
 
 	const getDriver = (trip: Trip) => {
@@ -239,7 +212,7 @@ export default function Home() {
 				return false
 			})
 			.map((x) => ({
-				name: `${x.brand.name} ${x.model}`,
+				name: formatVehicle(x),
 				src: x.brand.imageUrl as string
 			}))
 		const maximumViewed = 3
@@ -256,78 +229,78 @@ export default function Home() {
 		}
 	}
 
-	const TitleAndDescription = ({
-		data
-	}: {
-		data: {
-			title: string
-			description?: string
-			color?: string
-			images?: { name: string; src: string }[]
-		}
-	}) => {
-		return (
-			<Flex className='items-center gap-1'>
-				{data?.images && (
-					<Flex className='inline-flex flex-row-reverse [&>*]:inline-block [&>*:not(:last-child)]:-ml-4'>
-						{data.images.map((image) => (
-							<ImageOrText key={image.name} image={image} />
-						))}
-					</Flex>
-				)}
-				<Flex className='flex-col'>
-					<Text color={data.color ?? 'white'}>{data.title}</Text>
-					{!!data.description && (
-						<Text className='text-xs opacity-75'>
-							{data.description}
-						</Text>
-					)}
-				</Flex>
-			</Flex>
-		)
-	}
-
-	const ImageOrText = ({
-		image
-	}: {
-		image: { name: string; src: string }
-	}) => {
-		const [showImage, setShowImage] = useState(true)
-
-		return showImage ? (
-			<div
-				className='bg-white overflow-hidden w-8 h-8 min-w-[2rem] min-h-[2rem] max-w-[2rem] max-h-[2rem] 
-            rounded-full border-2 border-white'
-			>
-				<Image
-					key={image.src}
-					objectFit={'scale-down'}
-					className='flex-1 w-full h-full'
-					{...image}
-					onError={() => setShowImage(false)}
-					alt='_'
-				/>
-			</div>
-		) : (
-			<AvatarText name={image.name} />
-		)
-	}
-
-	const AvatarText = ({ name }: { name: string }) => {
-		const arr = name.split(' ')
-		const firstName = arr[0]
-		const lastName = arr.length > 1 ? arr.pop()?.split('')[0] : ''
-
-		return (
-			<Circle
-				bg={'gray.800'}
-				className='w-8 h-8 border-2 border-white'
-			>{`${firstName.split('')[0]}${
-				lastName ? '' : firstName.split('')[1]
-			}`}</Circle>
-		)
-	}
-
+	const tableData: ((trip?: Trip) => {
+		headerTitle: string
+		childrenTitle?: string
+		label: string
+		children?: ReactNode | JSX.Element | string | undefined
+	})[] = [
+		(trip?: Trip) => ({
+			headerTitle: 'Status da viagem',
+			childrenTitle: trip && getStopType(trip).description,
+			label: 'Stt',
+			children: trip && (
+				<IconBase className='text-2xl'>
+					<IconByType
+						type={
+							trip.status === 'traveling'
+								? getStopType(trip).value
+								: trip.status
+						}
+					/>
+				</IconBase>
+			)
+		}),
+		(trip?: Trip) => ({
+			headerTitle: 'Última atualização',
+			label: 'Atualz.',
+			children: trip && (
+				<MyListItem data={getDate(getLastUpdate(trip), true)} />
+			)
+		}),
+		(trip?: Trip) => ({
+			headerTitle: 'Cegonha / Guincho',
+			label: 'Veículo',
+			children: trip && <MyListItem data={getVehicle(trip)} />
+		}),
+		(trip?: Trip) => ({
+			headerTitle: 'Motorista',
+			label: 'Motorista',
+			children: trip && <MyListItem data={getDriver(trip)} />
+		}),
+		(trip?: Trip) => ({
+			headerTitle: 'Clientes',
+			label: 'Clientes',
+			children: trip && <MyListItem data={getClients(trip)} />
+		}),
+		(trip?: Trip) => ({
+			headerTitle: 'Carga transportada',
+			label: 'Carga transportada',
+			children: trip && <MyListItem data={getCharge(trip)} />
+		}),
+		(trip?: Trip) => ({
+			headerTitle: 'Localização',
+			label: 'Localização',
+			children: trip && <MyListItem data={getCheckpointAddress(trip)} />
+		}),
+		(trip?: Trip) => ({
+			headerTitle: 'Próximo destino',
+			label: 'Próximo destino',
+			children: trip && <MyListItem data={getStopAddress(trip)} />
+		}),
+		(trip?: Trip) => ({
+			headerTitle: 'Prazo mais próximo',
+			label: 'Prazo',
+			children: trip && (
+				<MyListItem data={getDate(getNextDeadline(trip))} />
+			)
+		}),
+		(trip?: Trip) => ({
+			headerTitle: 'Data de criação',
+			label: 'Criado em',
+			children: trip && <MyListItem data={getDate(trip.createdAt)} />
+		})
+	]
 	return (
 		<Flex className='relative w-full max-h-full h-full flex-1 flex-col justify-start'>
 			<Status statuses={statuses} />
@@ -336,22 +309,23 @@ export default function Home() {
             rounded-b-xl overflow-auto'
 			>
 				<TableContainer className='min-h-full h-min w-min pb-12 pr-12'>
-					<Table variant={'simple'} colorScheme='blue'>
+					<Table variant={'unstyled'} colorScheme='blue'>
 						<TableCaption>
 							Viagens em execução: {trips.length}
 						</TableCaption>
 						<Thead>
 							<Tr>
-								<Th title='Status da viagem'>Stt</Th>
-								<Th title='Última atualização'>Atualiz.</Th>
-								<Th title='Cegonha / Guincho'>Veículo</Th>
-								<Th title='Motorista'>Motorista</Th>
-								<Th title='Clientes'>Clientes</Th>
-								<Th title='Carga transportada'>Carga</Th>
-								<Th title='Localização'>Localização</Th>
-								<Th title='Próximo destino'>Próximo destino</Th>
-								<Th title='Prazo mais próximo'>Prazo</Th>
-								<Th title='Data de criação'>Criado em</Th>
+								{tableData.map((th) => {
+									const data = th()
+									return (
+										<Th
+											key={data.label}
+											title={data.headerTitle}
+										>
+											{data.label}
+										</Th>
+									)
+								})}
 							</Tr>
 						</Thead>
 						<Tbody>
@@ -381,72 +355,85 @@ export default function Home() {
 										router.push(`/app/trip/${trip.id}`)
 									}
 								>
-									<Td title={getStopType(trip).description}>
-										<IconBase className='text-2xl'>
-											<IconByType
-												type={
-													trip.status === 'traveling'
-														? getStopType(trip)
-																.value
-														: trip.status
+									{tableData.map((td) => {
+										const data = td(trip)
+										return (
+											<Td
+												key={`data-${data.label}`}
+												title={
+													data.childrenTitle ??
+													data.headerTitle
 												}
-											/>
-										</IconBase>
-									</Td>
-									<Td title='Última atualização'>
-										<DateComponent
-											date={getLastUpdate(trip)}
-											hour
-										/>
-									</Td>
-									<Td title='Cegonha ou guincho'>
-										<TitleAndDescription
-											data={getVehicle(trip)}
-										/>
-									</Td>
-									<Td title='Motorista'>
-										<TitleAndDescription
-											data={getDriver(trip)}
-										/>
-									</Td>
-									<Td title='Clientes'>
-										<TitleAndDescription
-											data={getClients(trip)}
-										/>
-									</Td>
-									<Td title='Carga transportada'>
-										<TitleAndDescription
-											data={getCharge(trip)}
-										/>
-									</Td>
-									<Td title='Localização atual'>
-										<TitleAndDescription
-											data={getCheckpointAddress(trip)}
-										/>
-									</Td>
-									<Td title='Próximo destino'>
-										<TitleAndDescription
-											data={getStopAddress(trip)}
-										/>
-									</Td>
-									<Td title='Prazo'>
-										<DateComponent
-											date={getNextDeadline(trip)}
-										/>
-									</Td>
-									<Td title='Data de criação da viagem'>
-										<DateComponent
-											date={trip.createdAt}
-											hour
-										/>
-									</Td>
+											>
+												{data.children}
+											</Td>
+										)
+									})}
 								</Tr>
 							))}
 						</Tbody>
 					</Table>
 				</TableContainer>
 			</main>
-			<FloatButton>+</FloatButton>
+
+			<Menu>
+				<MenuButton
+					size={'lg'}
+					as={IconButton}
+					shadow={'lg'}
+					opacity={'60%'}
+					_hover={{ opacity: '90%' }}
+					_active={{ opacity: '90%' }}
+					bottom={10}
+					right={10}
+					icon={<FaPlus />}
+					position={'absolute'}
+					rounded={'full'}
+				/>
+
+				<MenuList
+					zIndex={100}
+					className='overflow-y-auto bg-gray-800'
+					bg={'gray.700'}
+					w={'250px'}
+				>
+					<MenuItem
+						bg='transparent'
+						_hover={{ bg: 'gray.800' }}
+						icon={
+							<IconBase className='text-2xl'>
+								<IconByType type='transport' />
+							</IconBase>
+						}
+					>
+						Montar viagem
+					</MenuItem>
+					<MenuDivider />
+					<MenuItem
+						bg='transparent'
+						_hover={{ bg: 'gray.800' }}
+						icon={
+							<IconBase className='text-2xl'>
+								<IconByType type='contract' />
+							</IconBase>
+						}
+					>
+						Novo contrato
+					</MenuItem>
+					<MenuDivider />
+					<MenuItem
+						bg='transparent'
+						_hover={{ bg: 'gray.800' }}
+						icon={
+							<IconBase className='text-2xl'>
+								<IconByType type='budget' />
+							</IconBase>
+						}
+					>
+						Fazer orçamento
+					</MenuItem>
+				</MenuList>
+			</Menu>
 		</Flex>
 	)
 }
