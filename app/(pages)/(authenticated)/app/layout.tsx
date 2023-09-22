@@ -1,17 +1,10 @@
 'use client'
-import '@/app/globals.css'
-import type { Metadata } from 'next'
 
 import { FunctionComponent, ReactNode } from 'react'
 import { Grid, GridItem } from '@chakra-ui/react'
 import { Sidebar } from '@/app/components/organisms/Sidebar'
 import { Header } from '@/app/components/organisms/Header'
 import { Footer } from '@/app/components/organisms/Footer'
-
-export const metadata: Metadata = {
-	title: 'BTR Guinchos',
-	description: 'App da BTR Guinchos'
-}
 
 const AuthenticatedLayout: FunctionComponent<{ children: ReactNode }> = ({
 	children
@@ -43,29 +36,6 @@ const AuthenticatedLayout: FunctionComponent<{ children: ReactNode }> = ({
 			</GridItem>
 		</Grid>
 	)
-	// : (
-	// 	<Flex
-	// 		flexDirection={'column'}
-	// 		justifyContent={'center'}
-	// 		alignItems={'center'}
-	// 		bg={'gray.900'}
-	// 		className='h-[100svh] w-screen'
-	// 	>
-	// 		<Image
-	// 			src='/company_logo.png'
-	// 			className='w-48'
-	// 			alt='Enterprise Logo'
-	// 		/>
-	// 		<Text fontSize={'4xl'} className='text-white'>
-	// 			Faça login para acessar a aplicação!
-	// 		</Text>
-	// 		<Link href='/login'>
-	// 			<Text fontSize={'xl'} className='text-blue-400 underline'>
-	// 				Fazer login
-	// 			</Text>
-	// 		</Link>
-	// 	</Flex>
-	// )
 }
 
 export default AuthenticatedLayout
