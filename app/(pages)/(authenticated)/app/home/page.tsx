@@ -6,7 +6,6 @@ import {
 	IconButton,
 	Menu,
 	MenuButton,
-	MenuDivider,
 	MenuItem,
 	MenuList,
 	Table,
@@ -26,7 +25,7 @@ import format from 'date-fns/format'
 import ptBR from 'date-fns/locale/pt-BR'
 import Status from './Status'
 import { min } from 'date-fns'
-import { IconByType } from '@/app/components/atoms/IconByType'
+import { iconByType } from '@/app/components/atoms/IconByType'
 import { IconBase } from 'react-icons'
 import { useApi } from '@/app/context/api'
 import { formatVehicle, getNameAndLastName } from '@/util/format'
@@ -229,6 +228,13 @@ export default function Home() {
 		}
 	}
 
+	const IconT = ({ trip }: { trip: Trip }) => {
+		const Icon = iconByType(
+			trip.status === 'traveling' ? getStopType(trip).value : trip.status
+		)
+		return <Icon />
+	}
+
 	const tableData: ((trip?: Trip) => {
 		headerTitle: string
 		childrenTitle?: string
@@ -241,13 +247,7 @@ export default function Home() {
 			label: 'Stt',
 			children: trip && (
 				<IconBase className='text-2xl'>
-					<IconByType
-						type={
-							trip.status === 'traveling'
-								? getStopType(trip).value
-								: trip.status
-						}
-					/>
+					<IconT trip={trip} />
 				</IconBase>
 			)
 		}),
@@ -300,6 +300,12 @@ export default function Home() {
 			label: 'Criado em',
 			children: trip && <MyListItem data={getDate(trip.createdAt)} />
 		})
+	]
+
+	const newOptions = [
+		{ label: 'Montar viagem', icon: iconByType('transport') },
+		{ label: 'Novo contrato', icon: iconByType('contract') },
+		{ label: 'Fazer orçamento', icon: iconByType('budget') }
 	]
 	return (
 		<Flex className='relative w-full max-h-full h-full flex-1 flex-col justify-start'>
@@ -397,41 +403,20 @@ export default function Home() {
 					bg={'gray.700'}
 					w={'250px'}
 				>
-					<MenuItem
-						bg='transparent'
-						_hover={{ bg: 'gray.800' }}
-						icon={
-							<IconBase className='text-2xl'>
-								<IconByType type='transport' />
-							</IconBase>
-						}
-					>
-						Montar viagem
-					</MenuItem>
-					<MenuDivider />
-					<MenuItem
-						bg='transparent'
-						_hover={{ bg: 'gray.800' }}
-						icon={
-							<IconBase className='text-2xl'>
-								<IconByType type='contract' />
-							</IconBase>
-						}
-					>
-						Novo contrato
-					</MenuItem>
-					<MenuDivider />
-					<MenuItem
-						bg='transparent'
-						_hover={{ bg: 'gray.800' }}
-						icon={
-							<IconBase className='text-2xl'>
-								<IconByType type='budget' />
-							</IconBase>
-						}
-					>
-						Fazer orçamento
-					</MenuItem>
+					{newOptions.map((option) => (
+						<MenuItem
+							key={option.label}
+							bg='transparent'
+							_hover={{ bg: 'gray.800' }}
+							icon={
+								<IconBase className='text-2xl'>
+									<option.icon />
+								</IconBase>
+							}
+						>
+							{option.label}
+						</MenuItem>
+					))}
 				</MenuList>
 			</Menu>
 		</Flex>

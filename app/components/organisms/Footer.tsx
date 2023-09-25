@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react'
 import { Center } from '@chakra-ui/react'
-import { menuButtons } from '@/util/data'
+import { menuItems } from '@/util/data'
 import { MdPerson } from 'react-icons/md'
 import { useAuth } from '@/app/context/auth'
 import { SidebarButton } from '@/app/components/molecules/SidebarButton'
@@ -17,7 +17,7 @@ export const Footer: FunctionComponent = () => {
 	}
 	return (
 		<Center as='footer' className='bg-gray-900 w-full p-2 gap-4'>
-			{menuButtons.map((button) => (
+			{menuItems.map((button) => (
 				<SidebarButton
 					key={button.route}
 					button={button}

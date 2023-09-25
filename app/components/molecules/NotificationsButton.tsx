@@ -12,7 +12,7 @@ import {
 import { MdNotifications } from 'react-icons/md'
 import { useState } from 'react'
 import { useAuth } from '@/app/context/auth'
-import { IconByType } from '../atoms/IconByType'
+import { iconByType } from '../atoms/IconByType'
 import { IconBase, IconType } from 'react-icons'
 import { UserNotification } from '@/app/types'
 import { BiSolidDownArrow, BiSolidRightArrow } from 'react-icons/bi'
@@ -119,6 +119,7 @@ const Notification = ({
 	i: number
 	notification: UserNotification
 }) => {
+	const IconT = iconByType(notification.type)
 	return (
 		<div className='relative py-0.5'>
 			<MenuItem
@@ -140,7 +141,7 @@ const Notification = ({
 			>
 				<Flex className='items-center px-2 py-3 gap-2 text-white'>
 					<IconBase className='text-2xl flex-shrink-0'>
-						<IconByType type={notification.type} />
+						<IconT />
 					</IconBase>
 					<Flex direction={'column'} className='gap-1'>
 						<Text className='text-xs italic opacity-50'>

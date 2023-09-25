@@ -24,7 +24,7 @@ import { MdExitToApp, MdMenu, MdPerson } from 'react-icons/md'
 import { IconBase } from 'react-icons'
 import { useAuth } from '@/app/context/auth'
 import { usePathname, useRouter } from 'next/navigation'
-import { menuButtons } from '@/util/data'
+import { MenuItem, menuItems } from '@/util/data'
 import { SidebarButton } from '@/app/components/molecules/SidebarButton'
 
 export const Sidebar: FunctionComponent = () => {
@@ -35,7 +35,7 @@ export const Sidebar: FunctionComponent = () => {
 	const router = useRouter()
 	const pathname = usePathname()
 
-	const userButton = {
+	const userButton: MenuItem = {
 		imageUrl: imageUrl,
 		icon: MdPerson,
 		label: user?.name ?? 'Usuário',
@@ -63,10 +63,13 @@ export const Sidebar: FunctionComponent = () => {
 				/>
 				<Divider />
 				<VStack className='py-5 flex-1'>
-					{menuButtons.map((button) => (
+					{menuItems.map((button) => (
 						<SidebarButton
 							key={button.route}
-							active={pathname.startsWith(button.route)}
+							active={
+								!!button?.route &&
+								pathname.startsWith(button.route)
+							}
 							button={button}
 							size='xl'
 						/>
@@ -75,7 +78,10 @@ export const Sidebar: FunctionComponent = () => {
 				<Divider />
 				<SidebarButton
 					button={userButton}
-					active={pathname.startsWith(userButton.route)}
+					active={
+						!!userButton?.route &&
+						pathname.startsWith(userButton.route)
+					}
 					size='2xl'
 				/>
 				<SidebarButton
@@ -113,7 +119,7 @@ export const Sidebar: FunctionComponent = () => {
 					<Divider />
 					<DrawerBody>
 						<VStack className='py-5'>
-							{menuButtons.map((button) => (
+							{menuItems.map((button) => (
 								<Button
 									key={button.route}
 									className='w-full hover:text-black'
@@ -121,7 +127,7 @@ export const Sidebar: FunctionComponent = () => {
 									color={'white'}
 								>
 									<IconBase className='text-3xl'>
-										{<button.icon />}
+										<>{button.icon}</>
 									</IconBase>
 									<Text flex={1}>{button.label}</Text>
 								</Button>

@@ -25,8 +25,12 @@ export const ApiProvider: FunctionComponent<{ children: ReactNode }> = ({
 		body: BodyInit | undefined = undefined
 	) => {
 		try {
+			const headers = new Headers()
+			headers.append('Content-Type', 'application/json')
+			headers.append('Accept', 'application/json')
+
 			const response = await fetch(`${apiUrl}/${route}`, {
-				headers: { 'Content-Type': 'application/json' },
+				headers,
 				method,
 				body,
 				credentials: 'include'

@@ -10,13 +10,14 @@ import {
 	useState
 } from 'react'
 import { useApi } from './api'
-import { UserNotification } from '../types'
+import { Permissions, UserNotification } from '@/app/types'
 
 interface IAuthUser {
 	id: string
 	name: string
 	imageUrl: string
 	email: string
+	permissions: Permissions
 	notifications: UserNotification[]
 }
 
@@ -97,7 +98,6 @@ export const AuthProvider: FunctionComponent<{ children: ReactNode }> = ({
 				user: IAuthUser
 			}
 
-			console.log('response', userResponse)
 			setUser(userResponse)
 			localStorage.setItem('user', JSON.stringify(userResponse))
 			return userResponse
