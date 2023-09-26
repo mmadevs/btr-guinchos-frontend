@@ -41,12 +41,12 @@ export default function Home() {
 			{contract ? (
 				<>
 					<Text className='text-4xl'>Contrato</Text>
-					<Text>Cliente: {contract?.client?.name}</Text>
+					<Text>Cliente: {contract?.client?.displayName}</Text>
 
 					<List>
 						{contract?.services?.map((service) => (
 							<ListItem key={service.id}>
-								<p>{`${service.vehicle.brand.name} ${
+								<p>{`${service.vehicle.brand.displayName} ${
 									service.vehicle.model
 								} ${new Date(
 									service.vehicle.madeIn
