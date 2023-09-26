@@ -18,6 +18,7 @@ import {
 	BsCalendarEventFill,
 	BsFillBuildingsFill,
 	BsFillCartCheckFill,
+	BsFillPersonFill,
 	BsPeopleFill
 } from 'react-icons/bs'
 import { RiPassExpiredFill } from 'react-icons/ri'
@@ -54,10 +55,12 @@ export const iconByType = (
 			return MdSupervisedUserCircle
 		case 'documents':
 			return IoDocumentsSharp
-		case 'bankaccounts':
+		case 'bankaccount':
 			return SiNubank
 		case 'company':
 			return BsFillBuildingsFill
+		case 'individual':
+			return BsFillPersonFill
 		case 'percent':
 			return FaPercentage
 		case 'brands':

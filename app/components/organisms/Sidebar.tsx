@@ -47,22 +47,24 @@ export const Sidebar: FunctionComponent = () => {
 
 	return (
 		<Fragment>
-			<VStack className='bg-gray-900 w-16 p-2 h-screen hidden'>
-				<SidebarButton
-					button={{
-						icon: MdMenu,
-						label: 'Menu',
-						onClick: () => setIsOpen(true)
-					}}
-					size='xl'
-				/>
-				<Image
-					src='/company_logo.png'
-					boxSize={'50px'}
-					alt='Company logo'
-				/>
+			<VStack className='bg-gray-900 w-16 p-2 py-4 h-screen hidden'>
+				<VStack spacing={4}>
+					<SidebarButton
+						button={{
+							icon: MdMenu,
+							label: 'Menu',
+							onClick: () => setIsOpen(true)
+						}}
+						size='2xl'
+					/>
+					<Image
+						src='/company_logo.png'
+						boxSize={'50px'}
+						alt='Company logo'
+					/>
+				</VStack>
 				<Divider />
-				<VStack className='py-5 flex-1'>
+				<VStack spacing={6} className='py-5 flex-1 '>
 					{menuItems.map((button) => (
 						<SidebarButton
 							key={button.route}
@@ -71,27 +73,29 @@ export const Sidebar: FunctionComponent = () => {
 								pathname.startsWith(button.route)
 							}
 							button={button}
-							size='xl'
+							size='2xl'
 						/>
 					))}
 				</VStack>
 				<Divider />
-				<SidebarButton
-					button={userButton}
-					active={
-						!!userButton?.route &&
-						pathname.startsWith(userButton.route)
-					}
-					size='2xl'
-				/>
-				<SidebarButton
-					button={{
-						icon: MdExitToApp,
-						label: 'Sair',
-						onClick: logout
-					}}
-					size='xl'
-				/>
+				<VStack spacing={4}>
+					<SidebarButton
+						button={userButton}
+						active={
+							!!userButton?.route &&
+							pathname.startsWith(userButton.route)
+						}
+						size='2xl'
+					/>
+					<SidebarButton
+						button={{
+							icon: MdExitToApp,
+							label: 'Sair',
+							onClick: logout
+						}}
+						size='2xl'
+					/>
+				</VStack>
 			</VStack>
 			<Drawer
 				placement='left'

@@ -97,16 +97,16 @@ export const menuItems: MenuItem[] = [
 				route: '/documentos'
 			},
 			{
-				label: 'Taxas e descontos',
+				label: 'Taxas e desc.',
 				icon: iconByType('percent'),
 				permission: '',
 				route: '/taxas-descontos'
 			},
 			{
-				label: 'Informações da empresa',
+				label: 'Minha empresa',
 				icon: iconByType('company'),
 				permission: '',
-				route: '/informacoes-empresa'
+				route: '/minha-empresa'
 			},
 			{
 				label: 'Marcas',

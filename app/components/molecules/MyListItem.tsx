@@ -8,7 +8,7 @@ export const MyListItem = ({
 		title: string
 		description?: string
 		color?: string
-		images?: { name: string; src: string }[]
+		images?: { name: string; src: string | undefined }[]
 	}
 }) => {
 	return (

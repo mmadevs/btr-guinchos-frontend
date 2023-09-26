@@ -51,21 +51,25 @@ export default function Home() {
 	const loadAll = async () => {
 		try {
 			const tripsResponse = await api(`app/dashboard/trips`)
-			if (!tripsResponse?.ok) return
+			if (!tripsResponse?.ok)
+				throw new Error('Falha ao carregar as viagens')
 
 			const statusesResponse = await api(`app/dashboard/statuses`)
-			if (!statusesResponse?.ok) return
+			if (!statusesResponse?.ok)
+				throw new Error('Falha ao carregar os status')
 
-			if (tripsResponse?.ok && statusesResponse?.ok) {
-				const { trips: _trips } = await tripsResponse.json()
-				setTrips(_trips)
+			const { trips: _trips } = await tripsResponse.json()
+			setTrips(_trips)
 
-				const { statuses: _statuses } = await statusesResponse.json()
-				setStatuses(_statuses)
-			}
+			const { statuses: _statuses } = await statusesResponse.json()
+			setStatuses(_statuses)
 		} catch (err) {
 			console.error(err)
-			toast({ title: 'Erro!', description: (err as Error).message })
+			toast({
+				title: 'Erro!',
+				description: (err as Error).message,
+				colorScheme: 'red'
+			})
 		}
 	}
 
@@ -136,26 +140,27 @@ export default function Home() {
 		const { driver } = trip
 		return {
 			images: driver.imageUrl
-				? [{ name: driver.name, src: driver.imageUrl }]
+				? [{ name: driver.fullName, src: driver.imageUrl }]
 				: [],
-			title: getNameAndLastName(driver.name),
-			description: driver?.company?.name ?? '(Autônomo)'
+			title: getNameAndLastName(driver.displayName),
+			description: driver?.company?.displayName ?? '(Autônomo)'
 		}
 	}
 	const getVehicle = (trip: Trip) => {
 		const { stork } = trip
+		console.log(stork)
 		return {
 			images: stork.brand.imageUrl
 				? [
 						{
-							name: `${stork.brand.name} ${stork.model}`,
+							name: `${stork.brand.displayName} ${stork.model}`,
 							src: stork.brand.imageUrl
 						}
 				  ]
 				: [],
-			title: `${stork.brand.name} ${stork.model}`,
+			title: `${stork.brand.displayName} ${stork.model}`,
 			description: `${stork.plate.toLocaleUpperCase()} - ${getNameAndLastName(
-				stork.owner.name
+				stork.owner.displayName
 			)}`
 		}
 	}
@@ -172,16 +177,16 @@ export default function Home() {
 			})
 		const images = clients
 			.filter((x) => !!x.imageUrl)
-			.map((x) => ({ name: x.name, src: x.imageUrl as string }))
+			.map((x) => ({ name: x.fullName, src: x.imageUrl as string }))
 
 		return {
 			images,
 			title:
 				clients.length === 1
-					? getNameAndLastName(clients[0].name)
+					? getNameAndLastName(clients[0].displayName)
 					: clients
 							.slice(0, 2)
-							.map((x) => getNameAndLastName(x.name, true))
+							.map((x) => getNameAndLastName(x.displayName, true))
 							.join(', '),
 			description:
 				clients.length > 2 ? `E mais ${clients.length - 2}` : ''
@@ -192,7 +197,7 @@ export default function Home() {
 		const vehicles = trip.stops
 			.map((stop) => stop.vehicle)
 			.filter((vehicle) => {
-				const name = `${vehicle.brand.name} ${vehicle.model}`
+				const name = `${vehicle.brand.displayName} ${vehicle.model}`
 				if (!idsVeiculos[name]) {
 					idsVeiculos[name] = true
 					return true
@@ -203,7 +208,7 @@ export default function Home() {
 		const images = vehicles
 			.filter((x) => !!x.brand.imageUrl)
 			.filter((x) => {
-				const name = x.brand.name
+				const name = x.brand.displayName
 				if (!idsMarcas[name]) {
 					idsMarcas[name] = true
 					return true

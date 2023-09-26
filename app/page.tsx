@@ -19,7 +19,7 @@ export default function Home() {
 		>
 			<Image
 				overflow={'visible'}
-				className='w-40 p-4 md:rounded-full forcedElement'
+				className='w-40 p-4 rounded-full forcedElement'
 				src='/company_logo.png'
 				alt='Company logo'
 			/>

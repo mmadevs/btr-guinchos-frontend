@@ -1,12 +1,26 @@
 export interface Person {
 	id: string
-	name: string
+	displayName: string
+	fullName: string
 	tags: string[]
-	email: string
-	phones: string[]
-	addresses: Place[]
+	emails: PersonEmail[]
+	phones: PersonPhone[]
+	addresses: PersonAddress[]
 	imageUrl?: string
 	createdAt: Date
+}
+
+interface PersonAddress extends Place {
+	isDefault: boolean
+}
+interface PersonPhone {
+	number: string
+	isWhatsapp: boolean
+	isDefault: boolean
+}
+interface PersonEmail {
+	address: string
+	isDefault: boolean
 }
 
 export interface Individual extends Person {
@@ -52,7 +66,8 @@ export interface Driver extends Individual {
 
 export interface Brand {
 	id: string
-	name: string
+	fullName: string
+	displayName: string
 	imageUrl?: string
 }
 
